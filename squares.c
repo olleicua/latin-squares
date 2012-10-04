@@ -1,22 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-
-typedef struct _list {
-  char* list;
-  int size;
-  int max_size;
-}* list;
+#include "squares.h"
+#define CELL(square, row, col) ((square)->grid[(row)][(col)])
 
 list new_list(int max_size) {
   list list = malloc(sizeof(struct _list));
   list->size = 0;
   list->max_size = max_size;
-  list->list = malloc(max_size * sizeof(char));
+  list->list = malloc(max_size * sizeof(int));
   return list;
 }
 
-list push(list list, char symbol) {
+list push(list list, int symbol) {
   if (list->size < list->max_size) {
 	list->list[list->size] = symbol;
 	list->size++;
@@ -24,20 +20,15 @@ list push(list list, char symbol) {
   return list;
 }
 
-typedef struct _latin_grid {
-  char** grid;
-  int size;
-}* latin_grid;
-
 latin_grid new_latin_grid(int size) {
   int row, col;
   latin_grid latin_grid = malloc(sizeof(struct _latin_grid));
   latin_grid->size = size;
-  latin_grid->grid = malloc(size * sizeof(char *));
+  latin_grid->grid = malloc(size * sizeof(int *));
   for (row = 0; row < size; row++) {
-	latin_grid->grid[row] = malloc(size * sizeof(char));
+	latin_grid->grid[row] = malloc(size * sizeof(int));
 	for (col = 0; col < size; col++) {
-	  latin_grid->grid[row][col] = 1;
+	  CELL(latin_grid, row, col) = size;
 	}	
   }
   return latin_grid;
@@ -47,7 +38,7 @@ void print_latin_grid(latin_grid grid) {
   int row, col;
   for (row = 0; row < grid->size; row++) {
 	for (col = 0; col < grid->size; col++) {
-	  printf("%d", grid->grid[row][col]);
+	  printf("%d", CELL(grid, row, col));
 	}
 	printf("\n");
   }
@@ -72,7 +63,7 @@ int row_repeats(latin_grid grid) {
   for (row = 0; row < grid->size; row++) {
 	row_list->size = 0;
 	for (col = 0; col < grid->size; col++) {
-	  push(row_list, grid->grid[row][col]);
+	  push(row_list, CELL(grid, row, col));
 	}
 	count += repeats(row_list, grid->size);
   }
@@ -86,7 +77,7 @@ int column_repeats(latin_grid grid) {
   for (col = 0; col < grid->size; col++) {
 	column_list->size = 0;
 	for (row = 0; row < grid->size; row++) {
-	  push(column_list, grid->grid[row][col]);
+	  push(column_list, CELL(grid, row, col));
 	}
 	count += repeats(column_list, grid->size);
   }
@@ -98,8 +89,8 @@ int row_completeness_repeats(latin_grid grid) {
   list pair_list = new_list(grid->size * grid->size);
   for (row = 0; row < grid->size; row++) {
 	for (col = 0; col < (grid->size - 1); col++) {
-	  int pair_id = (grid->grid[row][col] * grid->size) +
-		grid->grid[row][col + 1];
+	  int pair_id = (CELL(grid, row, col) * grid->size) +
+		CELL(grid, row, col + 1);
 	  push(pair_list, pair_id);
 	}
   }
@@ -111,12 +102,19 @@ int orthogonality_repeats(latin_grid grid1, latin_grid grid2) {
   list pair_list = new_list(grid1->size * grid1->size);
   for (row = 0; row < grid1->size; row++) {
 	for (col = 0; col < grid1->size; col++) {
-	  int pair_id = (grid1->grid[row][col] * grid1->size) +
-		grid2->grid[row][col];
+	  int pair_id = generate_pair_id(grid1->size, CELL(grid1, row, col),
+									 CELL(grid2, row, col));
 	  push(pair_list, pair_id);
 	}
   }
   return repeats(pair_list, grid1->size * grid1->size);
+}
+
+int generate_pair_id(int size, int symbol1, int symbol2) {
+  if (symbol1 >= size || symbol2 >= size) {
+	return size * size;
+  }
+  return (symbol1 * size) + symbol2;
 }
 
 int repeats(list list, int space) {
@@ -136,16 +134,4 @@ int repeats(list list, int space) {
 	}
   }
   return count;
-}
-
-int main() {
-  latin_grid square = new_latin_grid(5);  
-  latin_grid square2 = new_latin_grid(5);  
-  print_latin_grid(square);
-  printf("\n");
-  print_latin_grid(square2);
-  //printf("\n%d, %d, %d, %d, %d\n", row_repeats(square), column_repeats(square), is_latin(square), row_completeness_repeats(square), orthogonality_repeats(square, square2));
-  printf("\n%d\n", orthogonality_repeats(square, square2));
-  
-  return 0;
 }
