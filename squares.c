@@ -42,6 +42,7 @@ void print_latin_grid(latin_grid grid) {
 	}
 	printf("\n");
   }
+  printf("\n");
 }
 
 bool is_latin(latin_grid grid) {

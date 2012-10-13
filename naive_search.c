@@ -4,7 +4,6 @@ void brute_search(latin_grid square, int row, int col) {
   if (col >= square->size) {
 	if (is_latin(square)) {
 	  print_latin_grid(square);
-	  printf("\n");
 	}
 	return;
   }
