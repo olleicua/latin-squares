@@ -4,6 +4,10 @@
 #include "squares.h"
 #define CELL(square, row, col) ((square)->grid[(row)][(col)])
 
+coord new_coord() {
+  return malloc(sizeof(struct _coord));
+}
+
 list new_list(int max_size) {
   list list = malloc(sizeof(struct _list));
   list->size = 0;
@@ -34,11 +38,18 @@ latin_grid new_latin_grid(int size) {
   return latin_grid;
 }
 
+void grid_write(latin_grid square, coord position, int symbol);
+
 latin_grid normalize_grid(latin_grid grid) {
   int i;
+  coord pos = new_coord();
   for (i = 0; i < grid->size; i++) {
-	CELL(grid, i, 0) = i;
-	CELL(grid, 0, i) = i;
+	pos->row = 0;
+	pos->col = i;
+	grid_write(grid, pos, i);
+	pos->row = i;
+	pos->col = 0;
+	grid_write(grid, pos, i);
   }
 }
 

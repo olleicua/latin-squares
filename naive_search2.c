@@ -27,6 +27,10 @@ void grid_write(latin_grid square, coord position, int symbol) {
   CELL(square, position->row, position->col) = symbol;
 }
 
+void before_print_callback(latin_grid square) {
+  printf("row-completeness-repeats: %d\n", row_completeness_repeats(square));
+}
+
 int main() {
   latin_grid square;
   coord position = new_coord();

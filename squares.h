@@ -4,6 +4,11 @@ typedef struct _list {
   int max_size;
 }* list;
 
+typedef struct _coord {
+  int row;
+  int col;
+}* coord;
+
 typedef struct _latin_grid {
   int** grid;
   int size;

@@ -13,7 +13,7 @@ coord next_coord(latin_grid square, coord position) {
   result->row = position->row + 1;
   result->col = position->col;
   if (result->row >= square->size) {
-	result->row = 0;
+	result->row = 1;
 	result->col = position->col + 1;
   }
   return result;
@@ -26,6 +26,8 @@ bool is_allowed(latin_grid square, coord position, int symbol) {
 void grid_write(latin_grid square, coord position, int symbol) {
   CELL(square, position->row, position->col) = symbol;
 }
+
+void before_print_callback(latin_grid square) {}
 
 int main() {
   latin_grid square;
