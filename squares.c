@@ -34,6 +34,14 @@ latin_grid new_latin_grid(int size) {
   return latin_grid;
 }
 
+latin_grid normalize_grid(latin_grid grid) {
+  int i;
+  for (i = 0; i < grid->size; i++) {
+	CELL(grid, i, 0) = i;
+	CELL(grid, 0, i) = i;
+  }
+}
+
 void print_latin_grid(latin_grid grid) {
   int row, col;
   for (row = 0; row < grid->size; row++) {
