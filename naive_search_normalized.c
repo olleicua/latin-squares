@@ -1,6 +1,6 @@
 #include "backtrack.c"
 
-bool is_complete(latin_grid square, coord position) {
+bool is_finished(latin_grid square, coord position) {
   return (position->col >= square->size) && is_latin(square);
 }
 
@@ -27,13 +27,15 @@ void grid_write(latin_grid square, coord position, int symbol) {
   CELL(square, position->row, position->col) = symbol;
 }
 
-void before_print_callback(latin_grid square) {}
+void print_success(latin_grid square) {
+  print_latin_grid(square);
+}
 
 int main() {
   latin_grid square;
   coord position = new_coord();
   int size;
-  for (size = 1; size <= 3; size++) {
+  for (size = 1; size <= 4; size++) {
 	square = new_latin_grid(size);
 	normalize_grid(square);
 	position->row = position->col = 1;

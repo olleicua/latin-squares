@@ -1,6 +1,6 @@
 #include "backtrack.c"
 
-bool is_complete(latin_grid square, coord position) {
+bool is_finished(latin_grid square, coord position) {
   return (position->col >= square->size) && is_latin(square);
 }
 
@@ -27,8 +27,9 @@ void grid_write(latin_grid square, coord position, int symbol) {
   CELL(square, position->row, position->col) = symbol;
 }
 
-void before_print_callback(latin_grid square) {
+void print_success(latin_grid square) {
   printf("row-completeness-repeats: %d\n", row_completeness_repeats(square));
+  print_latin_grid(square);
 }
 
 int main() {

@@ -1,17 +1,16 @@
 #include "squares.c"
 
-bool is_complete(latin_grid square, coord position);
+bool is_finished(latin_grid square, coord position);
 bool is_terminal(latin_grid square, coord position);
 coord next_coord(latin_grid square, coord position);
 bool is_allowed(latin_grid square, coord position, int symbol);
 void grid_write(latin_grid square, coord position, int symbol);
-void before_print_callback(latin_grid square);
+void print_success(latin_grid square);
 
 void backtrack(latin_grid square, coord position) {
   
-  if (is_complete(square, position)) {
-	before_print_callback(square);
-	print_latin_grid(square);
+  if (is_finished(square, position)) {
+	print_success(square);
 	return;
   }
   
