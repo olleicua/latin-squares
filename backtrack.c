@@ -29,3 +29,18 @@ void backtrack(latin_grid square, coord position) {
   }
   grid_write(square, position, square->size);
 }
+
+void init();
+void loop(int size);
+int main(int argc, char *argv[]) {
+  init();
+  int size;
+  int max = 3;
+  if (argc > 1) {
+	max = atoi(argv[1]);
+  }
+  for (size = 1; size <= max; size++) {
+	loop(size);
+  }
+  return 0;
+}

@@ -32,15 +32,15 @@ void print_success(latin_grid square) {
   print_latin_grid(square);
 }
 
-int main() {
-  latin_grid square;
-  coord position = new_coord();
-  int size;
-  for (size = 1; size <= 3; size++) {
-	square = new_latin_grid(size);
-	position->row = position->col = 0;
-	backtrack(square, position);
-  }
-  
-  return 0;
+latin_grid square;
+coord position;
+
+void init() {
+  position = new_coord();
+}
+
+void loop(size) {
+  square = new_latin_grid(size);
+  position->row = position->col = 0;
+  backtrack(square, position);
 }

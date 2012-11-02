@@ -31,16 +31,16 @@ void print_success(latin_grid square) {
   print_latin_grid(square);
 }
 
-int main() {
-  latin_grid square;
-  coord position = new_coord();
-  int size;
-  for (size = 1; size <= 4; size++) {
+latin_grid square;
+coord position;
+
+void init() {
+  position = new_coord();
+}
+
+void loop(size) {
 	square = new_latin_grid(size);
 	normalize_grid(square);
 	position->row = position->col = 1;
 	backtrack(square, position);
-  }
-  
-  return 0;
 }

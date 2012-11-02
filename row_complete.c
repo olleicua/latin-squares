@@ -84,25 +84,23 @@ void grid_write(latin_grid square, coord position, int symbol) {
 }
 
 void print_success(latin_grid square) {
-  int repeats = row_completeness_repeats(square);
-  printf("row-completeness-repeats: %d\n", repeats);
   print_latin_grid(square);
 }
 
-int main() {
-  latin_grid square;
-  coord position = new_coord();
-  int size;
-  for (size = 1; size <= 8; size++) {
-	printf("-- %d --\n", size);
-	row_used = malloc(size * sizeof(int));
-	col_used = malloc(size * sizeof(int));
-	pair_used = malloc(size * sizeof(int));
-	square = new_latin_grid(size);
-	normalize_grid(square);
-	position->row = position->col = 1;
-	backtrack(square, position);
-  }
-  
-  return 0;
+latin_grid square;
+coord position;
+
+void init() {
+  position = new_coord();
+}
+
+void loop(size) {
+  printf("-- %d --\n", size);
+  row_used = malloc(size * sizeof(int));
+  col_used = malloc(size * sizeof(int));
+  pair_used = malloc(size * sizeof(int));
+  square = new_latin_grid(size);
+  normalize_grid(square);
+  position->row = position->col = 1;
+  backtrack(square, position);
 }

@@ -1,5 +1,7 @@
 #include "squares.c"
 
+void grid_write(latin_grid square, coord position, int symbol) {}
+
 void brute_search(latin_grid square, int row, int col) {
   if (col >= square->size) {
 	if (is_latin(square)) {

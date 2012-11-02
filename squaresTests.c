@@ -1,5 +1,7 @@
 #include "squares.c"
 
+void grid_write(latin_grid square, coord position, int symbol) {}
+
 int main() {
   int row, col;
   latin_grid square1 = new_latin_grid(5);

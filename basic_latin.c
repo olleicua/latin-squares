@@ -61,11 +61,14 @@ void print_success(latin_grid square) {
   }
 }
 
-int main() {
-  latin_grid square;
-  coord position = new_coord();
-  int size;
-  for (size = 1; size <= 6; size++) {
+latin_grid square;
+coord position;
+
+void init() {
+  position = new_coord();
+}
+
+void loop(size) {
 	printf("-- %d --\n", size);
 	row_used = malloc(size * sizeof(int));
 	col_used = malloc(size * sizeof(int));
@@ -75,7 +78,4 @@ int main() {
 	position->row = position->col = 1;
 	backtrack(square, position);
 	printf(" min row completeness repeats %d at size %d\n", min_row_completeness, size);
-  }
-  
-  return 0;
 }
