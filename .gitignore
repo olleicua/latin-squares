@@ -1,3 +1,4 @@
+
 squaresTests
 build
 mapTest
@@ -6,3 +7,4 @@ naive_search
 naive_search2
 naive_search_normalized
 basic_latin
+row_complete

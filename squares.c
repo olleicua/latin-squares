@@ -155,3 +155,19 @@ int repeats(list list, int space) {
   }
   return count;
 }
+
+void print_bit_array(int* array, int size) {
+  int i, j;
+  for (i = 0; i < size; i++) {
+	printf("(%i):", i);
+	for (j = size - 1; j >= 0; j--) {
+	  if (array[i] & (1 << j)) {
+		printf("1");
+	  } else {
+		printf("0");
+	  }
+	}
+	printf(" ");
+  }
+  printf("\n");
+}
