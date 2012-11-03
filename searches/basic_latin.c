@@ -69,13 +69,14 @@ void init() {
 }
 
 void loop(size) {
-	printf("-- %d --\n", size);
-	row_used = malloc(size * sizeof(int));
-	col_used = malloc(size * sizeof(int));
-	min_row_completeness = size * 2;
-	square = new_latin_grid(size);
-	normalize_grid(square);
-	position->row = position->col = 1;
-	backtrack(square, position);
-	printf(" min row completeness repeats %d at size %d\n", min_row_completeness, size);
+  printf("-- %d --\n", size);
+  row_used = malloc(size * sizeof(int));
+  col_used = malloc(size * sizeof(int));
+  min_row_completeness = size * size;
+  square = new_latin_grid(size);
+  normalize_grid(square);
+  position->row = position->col = 1;
+  backtrack(square, position);
+  printf(" min row completeness repeats %d at size %d\n",
+		 min_row_completeness, size);
 }

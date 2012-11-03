@@ -26,7 +26,7 @@ bool is_terminal(latin_grid square, coord position) {
   
   int pair_possibilities = 0;
   if (position->col >= 1) {
-	int pair_possibilities = mask & pair_used[previous_cell(square, position)];
+	pair_possibilities = mask & pair_used[previous_cell(square, position)];
   }
   int used_union = (mask & row_used[position->row]) |
 	(mask & col_used[position->col]) | pair_possibilities;
