@@ -1,4 +1,4 @@
-#include "backtrack.c"
+#include "../lib/backtrack.c"
 
 // row_used and col_used are arrays of bit arrays to keep track of symbol
 // availability in each row/column.  The nth bit of the mth element of this

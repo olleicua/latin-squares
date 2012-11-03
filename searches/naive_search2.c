@@ -1,4 +1,4 @@
-#include "backtrack.c"
+#include "../lib/backtrack.c"
 
 bool is_finished(latin_grid square, coord position) {
   return (position->col >= square->size) && is_latin(square);

@@ -1,10 +1,8 @@
-
-squaresTests
-build
+lib/squaresTests
 mapTest
 mapTest.c
-naive_search
-naive_search2
-naive_search_normalized
-basic_latin
-row_complete
+searches/naive_search
+searches/naive_search2
+searches/naive_search_normalized
+searches/basic_latin
+searches/row_complete

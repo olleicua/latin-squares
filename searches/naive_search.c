@@ -1,4 +1,4 @@
-#include "squares.c"
+#include "../lib/squares.c"
 
 void grid_write(latin_grid square, coord position, int symbol) {}
 

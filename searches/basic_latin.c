@@ -1,4 +1,4 @@
-#include "backtrack.c"
+#include "../lib/backtrack.c"
 
 int* row_used;
 int* col_used;
