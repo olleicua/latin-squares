@@ -7,4 +7,5 @@ searches/naive_search_normalized
 searches/basic_latin
 searches/row_complete
 searches/orthogonal
+searches/abelian_rows
 deploy

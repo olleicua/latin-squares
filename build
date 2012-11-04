@@ -1,11 +1,7 @@
-if [ $1 ]
-then
-	if [ $2 ]
-	then
-		gcc $1.c -o $1 && ./$1 $2
-	else
-		gcc $1.c -o $1 && ./$1
-	fi
+#!/usr/bin/ruby
+
+if ARGV[0]
+  puts `gcc #{ARGV[0]}.c -o #{ARGV[0]} && ./#{ARGV[0]} #{ARGV[1..-1].join " "}`
 else
-	echo "Usage: build FILENAME"
-fi
+	puts "Usage: build FILENAME"
+end

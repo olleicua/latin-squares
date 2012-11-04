@@ -1,5 +1,7 @@
 #include "squares.c"
 
+bool verbose;
+
 bool is_finished(latin_grid square, coord position);
 bool is_terminal(latin_grid square, coord position);
 coord next_coord(latin_grid square, coord position);
@@ -25,6 +27,7 @@ void backtrack(latin_grid square, coord position) {
 	if (is_allowed(square, position, symbol)) {
 	  grid_write(square, position, symbol);
 	  backtrack(square, next_position);
+	  grid_write(square, position, square->size);
 	}
   }
   grid_write(square, position, square->size);
@@ -33,6 +36,11 @@ void backtrack(latin_grid square, coord position) {
 void init();
 void loop(int size);
 int main(int argc, char *argv[]) {
+  if ((argc > 2) && (strcmp(argv[2], "--quiet") == 0)) {
+	verbose = false;
+  } else {
+	verbose = true;
+  }
   init();
   int size;
   int max = 3;

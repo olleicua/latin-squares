@@ -1,3 +1,4 @@
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -57,7 +58,8 @@ void print_latin_grid(latin_grid grid) {
   int row, col;
   for (row = 0; row < grid->size; row++) {
 	for (col = 0; col < grid->size; col++) {
-	  printf("%d", CELL(grid, row, col));
+	  int symbol = CELL(grid, row, col);
+	  printf("%c", (symbol < 10) ? '0' + symbol : 'W' + symbol);
 	}
 	printf("\n");
   }
@@ -156,17 +158,18 @@ int repeats(list list, int space) {
   return count;
 }
 
+void print_bits(long array, int size) {
+  int i;
+  for (i = size - 1; i >= 0; i--) {
+	printf("%s", (array & (1 << i)) ? "1" : "0");
+  }
+}
+
 void print_bit_array(int* array, int size) {
   int i, j;
   for (i = 0; i < size; i++) {
 	printf("(%i):", i);
-	for (j = size - 1; j >= 0; j--) {
-	  if (array[i] & (1 << j)) {
-		printf("1");
-	  } else {
-		printf("0");
-	  }
-	}
+	print_bits((long)array[i], size);
 	printf(" ");
   }
   printf("\n");
