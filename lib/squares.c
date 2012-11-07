@@ -132,6 +132,20 @@ int orthogonality_repeats(latin_grid grid1, latin_grid grid2) {
   return repeats(pair_list, grid1->size * grid1->size);
 }
 
+int diagonal_repeats(latin_grid grid1, latin_grid grid2) {
+  // counts repeated pairs of the (grid1[n,m], grid2[n,m+1])
+  int row, col;
+  list pair_list = new_list(grid1->size * grid1->size);
+  for (row = 0; row < grid1->size; row++) {
+	for (col = 0; col < (grid1->size - 1); col++) {
+	  int pair_id = generate_pair_id(grid1->size, CELL(grid1, row, col),
+									 CELL(grid2, row, col + 1));
+	  push(pair_list, pair_id);
+	}
+  }
+  return repeats(pair_list, grid1->size * grid1->size);
+}
+
 int generate_pair_id(int size, int symbol1, int symbol2) {
   if (symbol1 >= size || symbol2 >= size) {
 	return size * size;

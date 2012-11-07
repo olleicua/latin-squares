@@ -23,6 +23,11 @@ int min_row_completeness_A;
 int min_row_completeness_B;
 int min_row_completeness_total;
 
+// current best diagonal completeness
+int min_diagonal_completeness_AB;
+int min_diagonal_completeness_BA;
+int min_diagonal_completeness_total;
+
 bool is_finished(latin_grid square, coord position) {
   return (position->col >= square->size);
 }
@@ -103,13 +108,18 @@ void grid_write(latin_grid square, coord position, int symbol) {
 
 void print_success(latin_grid square) {
   if (square == square_B) {
-	int repeats_total =
-	  row_completeness_repeats(square_A) + row_completeness_repeats(square_B);
 	int repeats_A = row_completeness_repeats(square_A);
 	int repeats_B = row_completeness_repeats(square_B);
+	int repeats_total = repeats_A + repeats_B;
+	int repeats_d_AB = diagonal_repeats(square_A, square_B);
+	int repeats_d_BA = diagonal_repeats(square_B, square_A);
+	int repeats_d_total = repeats_d_AB + repeats_d_BA;
 	printf("row-completeness-repeats A: %d\n", repeats_A);
 	printf("row-completeness-repeats B: %d\n", repeats_B);
 	printf("row-completeness-repeats total: %d\n\n", repeats_total);
+	printf("row-diagonal-repeats AB: %d\n", repeats_d_AB);
+	printf("row-diagonal-repeats BA: %d\n", repeats_d_BA);
+	printf("row-diagonal-repeats total: %d\n\n", repeats_d_total);
 	print_latin_grid(square_A);
 	print_latin_grid(square_B);
 	printf(" *\n\n");
@@ -121,6 +131,16 @@ void print_success(latin_grid square) {
 	}
 	if (repeats_total < min_row_completeness_total) {
 	  min_row_completeness_total = repeats_total;
+	}
+
+	if (repeats_d_AB < min_diagonal_completeness_AB) {
+	  min_diagonal_completeness_AB = repeats_d_AB;
+	}
+	if (repeats_d_BA < min_diagonal_completeness_BA) {
+	  min_diagonal_completeness_BA = repeats_d_BA;
+	}
+	if (repeats_d_total < min_diagonal_completeness_total) {
+	  min_diagonal_completeness_total = repeats_d_total;
 	}
   } else {
 	coord position = new_coord();
@@ -138,6 +158,9 @@ void loop(size) {
   min_row_completeness_A = size * size;
   min_row_completeness_B = size * size;
   min_row_completeness_total = size * size;
+  min_diagonal_completeness_AB = size * size;
+  min_diagonal_completeness_BA = size * size;
+  min_diagonal_completeness_total = size * size;
 
   // allocate memory
   row_used_A = malloc(size * sizeof(int));
@@ -158,5 +181,11 @@ void loop(size) {
 		 min_row_completeness_B, size);
   printf(" min row completeness repeats total %d at size %d\n\n",
 		 min_row_completeness_total, size);
+  printf(" min diagonal completeness repeats AB %d at size %d\n",
+		 min_diagonal_completeness_AB, size);
+  printf(" min diagonal completeness repeats BA %d at size %d\n",
+		 min_diagonal_completeness_BA, size);
+  printf(" min diagonal completeness repeats total %d at size %d\n\n",
+		 min_diagonal_completeness_total, size);
 
 }
