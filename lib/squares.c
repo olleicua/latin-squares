@@ -39,6 +39,17 @@ latin_grid new_latin_grid(int size) {
   return latin_grid;
 }
 
+latin_grid square_copy(latin_grid square) {
+  int row, col;
+  latin_grid result = new_latin_grid(square->size);
+  for (row = 0; row < square->size; row++) {
+	for (col = 0; col < square->size; col++) {
+	  CELL(result, row, col) = CELL(square, row, col);
+	}
+  }
+  return result;
+}
+
 void grid_write(latin_grid square, coord position, int symbol);
 
 latin_grid normalize_grid(latin_grid grid) {

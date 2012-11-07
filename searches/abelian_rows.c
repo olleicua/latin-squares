@@ -11,6 +11,9 @@ long diff_used;
 
 int total_found;
 
+latin_grid first_found;
+latin_grid second_found;
+
 int difference(latin_grid square, coord position, int symbol) {
   if (symbol >= square->size) {
 	return square->size;
@@ -79,6 +82,15 @@ void print_success(latin_grid square) {
 	fill_in_square(square);
 	print_latin_grid(square);
   }
+  
+  if (first_found == NULL) {
+	first_found = square_copy(square);
+  } else {
+	if (second_found == NULL) {
+	  second_found = square_copy(square);
+	}
+  }
+  
   total_found++;
 }
 
@@ -92,6 +104,8 @@ void init() {
 void loop(size) {
   int _size = size * 2; // ignore odd orders
   printf("-- %d --\n", _size);
+  first_found = NULL;
+  second_found = NULL;
   total_found = 0;
   row_used = 0;
   diff_used = 0;
@@ -102,4 +116,15 @@ void loop(size) {
   position->col = 1;
   backtrack(square, position);
   printf("\nfound %i of size %i\n", total_found, _size);
+  if (first_found != NULL && second_found != NULL) {
+	printf("\ncomparing squares:\n");
+	print_latin_grid(first_found);
+	print_latin_grid(second_found);
+	printf("\na: %i, b: %i, c: %i, d: %i, e: %i\n",
+		   orthogonality_repeats(first_found, second_found),
+		   row_completeness_repeats(first_found),
+		   row_completeness_repeats(second_found),
+		   diagonal_repeats(first_found, second_found),
+		   diagonal_repeats(second_found, first_found));
+  }
 }
