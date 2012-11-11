@@ -44,3 +44,5 @@ void loop(size) {
   position->row = position->col = 0;
   backtrack(square, position);
 }
+
+void finish() {}

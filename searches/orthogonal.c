@@ -189,3 +189,5 @@ void loop(size) {
 		 min_diagonal_completeness_total, size);
 
 }
+
+void finish() {}

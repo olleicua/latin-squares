@@ -35,6 +35,7 @@ void backtrack(latin_grid square, coord position) {
 
 void init();
 void loop(int size);
+void finish();
 int main(int argc, char *argv[]) {
   if ((argc > 2) && (strcmp(argv[2], "--quiet") == 0)) {
 	verbose = false;
@@ -50,5 +51,6 @@ int main(int argc, char *argv[]) {
   for (size = 1; size <= max; size++) {
 	loop(size);
   }
+  finish();
   return 0;
 }

@@ -10,6 +10,21 @@ int* col_used;
 // follows m somewhere on the grid.
 int* pair_used;
 
+// linked list of squares
+typedef struct _square_list {
+  latin_grid square;
+  struct _square_list* next;
+}* square_list;
+
+square_list result_list;
+
+square_list square_list_push(square_list list, latin_grid square) {
+  square_list result = malloc(sizeof(square_list));
+  result->square = square;
+  result->next = list;
+  return result;
+}
+
 int previous_cell(latin_grid square, coord position) {
   if (position->col > 0) {
 	return CELL(square, position->row, position->col - 1);
@@ -85,6 +100,51 @@ void grid_write(latin_grid square, coord position, int symbol) {
 
 void print_success(latin_grid square) {
   print_latin_grid(square);
+  result_list = square_list_push(result_list, square_copy(square));
+}
+
+void compare_pairs(int size) {
+  square_list sq_ls1, sq_ls2;
+  int best_orthogonal = size * size;
+  int best_diagonal = size * size;
+  int best_AD = size * size * size;
+  int best_ADE = size * size * size;
+  int orthogonal, diagonal_AB, diagonal_BA, diagonal, AD, ADE;
+  bool show_pair;
+  for (sq_ls1 = result_list; sq_ls1 != NULL; sq_ls1 = sq_ls1->next) {
+    for (sq_ls2 = sq_ls1->next; sq_ls2 != NULL; sq_ls2 = sq_ls2->next) {
+      orthogonal = orthogonality_repeats(sq_ls1->square, sq_ls2->square);
+      diagonal_AB = diagonal_repeats(sq_ls1->square, sq_ls2->square);
+      diagonal_BA = diagonal_repeats(sq_ls2->square, sq_ls1->square);
+      diagonal = diagonal_AB < diagonal_BA ? diagonal_AB : diagonal_BA;
+      AD = orthogonal + diagonal;
+      ADE = orthogonal + diagonal_AB + diagonal_BA;
+      show_pair = false;
+      if (orthogonal < best_orthogonal) {
+	best_orthogonal = orthogonal;
+	show_pair = true;
+      }
+      if (diagonal < best_diagonal) {
+	best_diagonal = diagonal;
+	show_pair = true;
+      }
+      if (AD < best_AD) {
+	best_AD = AD;
+	show_pair = true;
+      }
+      if (ADE < best_ADE) {
+	best_ADE = ADE;
+	show_pair = true;
+      }
+      if (show_pair) {
+	printf("/-pair-\\\n");
+	print_latin_grid(sq_ls1->square);
+	print_latin_grid(sq_ls2->square);
+	printf("orthogonal: %d\ndiagonal AB: %d\ndiagonal BA: %d\nAD: %i\nADE: %i\n",
+	       orthogonal, diagonal_AB, diagonal_BA, AD, ADE);
+      }
+    }
+  }
 }
 
 latin_grid square;
@@ -96,6 +156,9 @@ void init() {
 
 void loop(size) {
   printf("-- %d --\n", size);
+
+  result_list = NULL;
+
   row_used = malloc(size * sizeof(int));
   col_used = malloc(size * sizeof(int));
   pair_used = malloc(size * sizeof(int));
@@ -103,6 +166,7 @@ void loop(size) {
   normalize_grid(square);
   position->row = position->col = 1;
   backtrack(square, position);
+  compare_pairs(size);
 }
 
 void finish() {}

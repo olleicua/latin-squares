@@ -80,3 +80,5 @@ void loop(size) {
   printf(" min row completeness repeats %d at size %d\n",
 		 min_row_completeness, size);
 }
+
+void finish() {}

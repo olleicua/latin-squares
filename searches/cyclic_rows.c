@@ -128,3 +128,5 @@ void loop(size) {
 		   diagonal_repeats(second_found, first_found));
   }
 }
+
+void finish() {}
