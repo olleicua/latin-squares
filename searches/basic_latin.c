@@ -54,8 +54,10 @@ void grid_write(latin_grid square, coord position, int symbol) {
 
 void print_success(latin_grid square) {
   int repeats = row_completeness_repeats(square);
-  printf("row-completeness-repeats: %d\n", repeats);
-  print_latin_grid(square);
+  if (verbose) {
+	printf("row-completeness-repeats: %d\n", repeats);
+	print_latin_grid(square);
+  }
   if (repeats < min_row_completeness) {
 	min_row_completeness = repeats;
   }

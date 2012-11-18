@@ -99,7 +99,9 @@ void grid_write(latin_grid square, coord position, int symbol) {
 }
 
 void print_success(latin_grid square) {
-  print_latin_grid(square);
+  if (verbose) {
+	report1(square);
+  }
   result_list = square_list_push(result_list, square_copy(square));
 }
 
@@ -121,28 +123,25 @@ void compare_pairs(int size) {
       ADE = orthogonal + diagonal_AB + diagonal_BA;
       show_pair = false;
       if (orthogonal < best_orthogonal) {
-	best_orthogonal = orthogonal;
-	show_pair = true;
+		best_orthogonal = orthogonal;
+		show_pair = true;
       }
       if (diagonal < best_diagonal) {
-	best_diagonal = diagonal;
-	show_pair = true;
+		best_diagonal = diagonal;
+		show_pair = true;
       }
       if (AD < best_AD) {
-	best_AD = AD;
-	show_pair = true;
+		best_AD = AD;
+		show_pair = true;
       }
       if (ADE < best_ADE) {
-	best_ADE = ADE;
-	show_pair = true;
+		best_ADE = ADE;
+		show_pair = true;
       }
       if (show_pair) {
-	printf("/-pair-\\\n");
-	print_latin_grid(sq_ls1->square);
-	print_latin_grid(sq_ls2->square);
-	printf("orthogonal: %d\ndiagonal AB: %d\ndiagonal BA: %d\nAD: %i\nADE: %i\n",
-	       orthogonal, diagonal_AB, diagonal_BA, AD, ADE);
-      }
+		printf("/-pair-\\\n");
+		report2(sq_ls1->square, sq_ls2->square);
+	  }
     }
   }
 }

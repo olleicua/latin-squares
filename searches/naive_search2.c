@@ -29,7 +29,9 @@ void grid_write(latin_grid square, coord position, int symbol) {
 
 void print_success(latin_grid square) {
   printf("row-completeness-repeats: %d\n", row_completeness_repeats(square));
-  print_latin_grid(square);
+  if (verbose) {
+	print_latin_grid(square);
+  }
 }
 
 latin_grid square;

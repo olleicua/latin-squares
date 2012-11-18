@@ -105,25 +105,8 @@ void loop(size) {
     gen_cyclic(square1);
     gen_cyclic(square2);
   }
-  
-  print_latin_grid(square1);
-  print_latin_grid(square2);
 
-  a = orthogonality_repeats(square1, square2);
-  b = row_completeness_repeats(square1);
-  c = row_completeness_repeats(square2);
-  d = diagonal_repeats(square1, square2);
-  e = diagonal_repeats(square2, square1);
-
-  
-  printf("a:%d, b:%d, c:%d, d:%d, e:%d\n",
-	 a, b, c, d, e);
-  
-  printf("2a+b+c:%d, a+b+d:%d, a+c+e:%d, a+b+c+d+e:%d\n",
-	 (2 * a) + b + c,
-	 a + b + d,
-	 a + c + e,
-	 a + b + c + d + e);
+  report2(square1, square2);
 }
 
 void finish() {}

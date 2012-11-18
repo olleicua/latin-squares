@@ -84,7 +84,7 @@ void grid_write(latin_grid square, coord position, int symbol) {
 }
 
 void print_success(latin_grid square) {
-  print_latin_grid(square);
+  report1(square);
 }
 
 latin_grid square;

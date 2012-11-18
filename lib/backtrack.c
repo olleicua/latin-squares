@@ -1,7 +1,5 @@
 #include "squares.c"
 
-bool verbose;
-
 bool is_finished(latin_grid square, coord position);
 bool is_terminal(latin_grid square, coord position);
 coord next_coord(latin_grid square, coord position);

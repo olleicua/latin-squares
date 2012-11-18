@@ -199,3 +199,34 @@ void print_bit_array(int* array, int size) {
   }
   printf("\n");
 }
+
+bool verbose;
+
+void report1(latin_grid square) {
+  if (verbose) {
+	print_latin_grid(square);
+  }
+  printf("b:%d\n\n", row_completeness_repeats(square));
+}
+
+void report2(latin_grid square1, latin_grid square2) {
+  if (verbose) {
+	print_latin_grid(square1);
+	print_latin_grid(square2);
+  }
+
+  int a = orthogonality_repeats(square1, square2);
+  int b = row_completeness_repeats(square1);
+  int c = row_completeness_repeats(square2);
+  int d = diagonal_repeats(square1, square2);
+  int e = diagonal_repeats(square2, square1);
+  
+  printf("a:%d, b:%d, c:%d, d:%d, e:%d\n",
+		 a, b, c, d, e);
+  
+  printf("2a+b+c:%d, a+b+d:%d, a+c+e:%d, a+b+c+d+e:%d\n\n",
+		 (2 * a) + b + c,
+		 a + b + d,
+		 a + c + e,
+		 a + b + c + d + e);
+}

@@ -114,14 +114,9 @@ void print_success(latin_grid square) {
 	int repeats_d_AB = diagonal_repeats(square_A, square_B);
 	int repeats_d_BA = diagonal_repeats(square_B, square_A);
 	int repeats_d_total = repeats_d_AB + repeats_d_BA;
-	printf("row-completeness-repeats A: %d\n", repeats_A);
-	printf("row-completeness-repeats B: %d\n", repeats_B);
-	printf("row-completeness-repeats total: %d\n\n", repeats_total);
-	printf("row-diagonal-repeats AB: %d\n", repeats_d_AB);
-	printf("row-diagonal-repeats BA: %d\n", repeats_d_BA);
-	printf("row-diagonal-repeats total: %d\n\n", repeats_d_total);
-	print_latin_grid(square_A);
-	print_latin_grid(square_B);
+	if (verbose) {
+	  report2(square_A, square_B);
+	}
 	printf(" *\n\n");
 	if (repeats_A < min_row_completeness_A) {
 	  min_row_completeness_A = repeats_A;

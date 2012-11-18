@@ -118,14 +118,7 @@ void loop(size) {
   printf("\nfound %i of size %i\n", total_found, _size);
   if (first_found != NULL && second_found != NULL) {
 	printf("\ncomparing squares:\n");
-	print_latin_grid(first_found);
-	print_latin_grid(second_found);
-	printf("\na: %i, b: %i, c: %i, d: %i, e: %i\n",
-		   orthogonality_repeats(first_found, second_found),
-		   row_completeness_repeats(first_found),
-		   row_completeness_repeats(second_found),
-		   diagonal_repeats(first_found, second_found),
-		   diagonal_repeats(second_found, first_found));
+	report2(first_found, second_found);
   }
 }
 
