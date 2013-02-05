@@ -83,8 +83,11 @@ void grid_write(latin_grid square, coord position, int symbol) {
   CELL(square, position->row, position->col) = symbol;
 }
 
+int squares_found;
+
 void print_success(latin_grid square) {
   report1(square);
+  squares_found++;
 }
 
 latin_grid square;
@@ -96,6 +99,7 @@ void init() {
 
 void loop(size) {
   printf("-- %d --\n", size);
+  squares_found = 0;
   row_used = malloc(size * sizeof(int));
   col_used = malloc(size * sizeof(int));
   pair_used = malloc(size * sizeof(int));
@@ -103,6 +107,7 @@ void loop(size) {
   normalize_grid(square);
   position->row = position->col = 1;
   backtrack(square, position);
+  printf("Found %d squares\n", squares_found);
 }
 
 void finish() {}

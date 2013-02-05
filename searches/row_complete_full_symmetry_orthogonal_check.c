@@ -46,6 +46,16 @@ int serialize_row(latin_grid square, int row) {
   return result;
 }
 
+int reverse_serialize_row(latin_grid square, int row) {
+  int i;
+  int result = 0;
+  for (i = square->size - 1; i >= 0; i--) {
+	result *= square->size;
+	result += square->size - CELL(square, row, i) - 1;
+  }
+  return result;
+}
+
 int mapping(int size, int map, int in) {
   int i;
   for (i = size - 1; i >= 0; i--) {
@@ -68,20 +78,34 @@ int row_map(int size, int map, int row) {
   }
 }
 
-bool is_redundant(latin_grid square, int row, int target) {
+bool is_shuffle_redundant(latin_grid square, int row, int target) {
   int target_row = CELL(square, row, target);
   if (CELL(square, target_row, target) >= square->size) {
 	return false;
   }
   int this_row = serialize_row(square, row);
   int old_row = serialize_row(square, target);
-  int new_row = row_map(square->size, this_row, serialize_row(square, target_row));
+  int new_row = row_map(square->size, this_row,
+						serialize_row(square, target_row));
   if (new_row > old_row) {
 	return true;
   }
   if (new_row == old_row) {
-	return is_redundant(square, row, target + 1);
+	return is_shuffle_redundant(square, row, target + 1);
   }
+  return false;
+}
+
+bool is_mirror_redundant(latin_grid square, int row) {
+  
+  if (CELL(square, row, square->size - 1) != square->size - 2) {
+	return false;
+  }
+  
+  if (reverse_serialize_row(square, row) > serialize_row(square, 1)) {
+	return true;
+  }
+  
   return false;
 }
 
@@ -91,9 +115,16 @@ bool is_terminal(latin_grid square, coord position) {
   // check for row shuffling symmetry if we are at the end of a line
   if (position->col == 1 && position->row > 2) {
 	for (i = 1; i < position->row; i++) {
-	  if (is_redundant(square, i, 1)) {
+	  if (is_shuffle_redundant(square, i, 1)) {
 		return true;
 	  }
+	}
+  }
+
+  // check for mirror symmetry if we are at the end of a line
+  if (position->col == 1 && position->row > 1) {
+	if (is_mirror_redundant(square, position->row - 1)) {
+		return true;
 	}
   }
   
