@@ -65,19 +65,23 @@ bool check_metrics(latin_grid square1) {
   int orthogonal = orthogonality_repeats(square1, temp_square2);
   int diagonal_AB = diagonal_repeats(square1, temp_square2) ;
   int diagonal_BA = diagonal_repeats(square1, temp_square2) ;
-  int diagonal = MIN(diagonal_AB, diagonal_BA);
-  int _2AD = MIN((orthogonal * 2) + diagonal_AB, (orthogonal * 2) + diagonal_BA);
-  int _2ADE = (orthogonal * 2) + diagonal_AB + diagonal_BA;
   int DE = diagonal_AB + diagonal_BA;
   if (orthogonal < best_orthogonal) {
-	best_DE_for_A = square1->size * square1->size * 2;
+	if (is_complete) {
+	  best_DE_for_A = DE;
+	  best_orthogonal = orthogonal;
+	  report2(square1, temp_square2);
+	}
+	return false;
   }
-  bool check_orthogonal = check_metric(orthogonal, &best_orthogonal, is_complete, square1);
-  bool check_diagonal = check_metric(diagonal, &best_diagonal, is_complete, square1);
-  bool check_2AD = check_metric(_2AD, &best_2AD, is_complete, square1);
-  bool check_2ADE = check_metric(_2ADE, &best_2ADE, is_complete, square1);
-  bool check_DE_for_A = check_metric(DE, &best_DE_for_A, is_complete, square1);
-  return check_orthogonal && check_diagonal && check_2AD && check_2ADE && check_DE_for_A;
+  if (orthogonal == best_orthogonal && DE < best_DE_for_A) {
+	if (is_complete) {
+	  best_DE_for_A = DE;
+	  report2(square1, temp_square2);
+	}
+	return false;
+  }
+  return true;
 }
 
 void compare_permutations(latin_grid square1, latin_grid square2) {
