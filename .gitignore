@@ -11,6 +11,7 @@ searches/cyclic_rows
 searches/row_complete_orthogonal_check
 searches/row_complete_shuffle_symmetry_orthogonal_check
 searches/row_complete_full_symmetry_orthogonal_check
+searches/iwanless_rows
 searches/L_R
 deploy
 todo.org

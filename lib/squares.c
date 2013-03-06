@@ -63,6 +63,7 @@ latin_grid normalize_grid(latin_grid grid) {
 	pos->col = 0;
 	grid_write(grid, pos, i);
   }
+  return grid;
 }
 
 void print_latin_grid(latin_grid grid) {
@@ -191,7 +192,7 @@ void print_bits(long array, int size) {
 }
 
 void print_bit_array(int* array, int size) {
-  int i, j;
+  int i;
   for (i = 0; i < size; i++) {
 	printf("(%i):", i);
 	print_bits((long)array[i], size);
