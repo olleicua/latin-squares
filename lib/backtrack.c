@@ -29,6 +29,7 @@ void backtrack(latin_grid square, coord position) {
 	}
   }
   grid_write(square, position, square->size);
+  free(next_position);
 }
 
 void init();
