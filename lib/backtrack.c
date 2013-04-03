@@ -28,7 +28,7 @@ void backtrack(latin_grid square, coord position) {
 	  grid_write(square, position, square->size);
 	}
   }
-  grid_write(square, position, square->size);
+  grid_write(square, position, square->size); // square->size represents blank
   free(next_position);
 }
 

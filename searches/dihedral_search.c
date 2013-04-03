@@ -16,10 +16,8 @@ long row_used_A, row_used_B;
 long diff_used_A, diff_used_B, diff_used_orthogonal;
 int *diff_used_diagonal_AB, *diff_used_diagonal_BA;
 
-int least_AB_repeats, least_diagonal_repeats, total_found;
-
-// TODO: consider removing these
-latin_grid first_found, second_found;
+int least_AB_repeats, least_diagonal_repeats, total_found,
+  equivalent_to_v_used, equivalent_to_u_used;
 
 int diagonal_repeat_count(int *repeats) {
   int i, result = 0;
@@ -125,6 +123,22 @@ coord next_coord(latin_grid square, coord position) {
 // check that the symbol, the "difference" between it and the previous symbol
 // and the "difference" between it and it's orthogonal pair are all unique
 bool is_allowed(latin_grid square, coord position, int symbol) {
+  
+  /*
+  if (square == square_A) {
+	if (equivalent_to_v_used == 0 &&
+		dihedral_equivalent_to_v(symbol, square->size) &&
+		symbol != 1) {
+	  return false;
+	}
+	if (equivalent_to_u_used == 0 &&
+		dihedral_equivalent_to_u(symbol, square->size) &&
+		symbol != 2) {
+	  return false;
+	}
+  }
+  */
+  
   long symbol_mask = 1 << symbol;
   long row_diff_mask = 1 << row_difference(square, position, symbol);
   
@@ -167,6 +181,20 @@ void grid_write(latin_grid square, coord position, int symbol) {
 	if (position->col > 0) {
 	  set_used(&diff_used_A, row_difference(square, position, old_symbol), false);
 	  set_used(&diff_used_A, row_difference(square, position, symbol), true);
+	}
+	
+	// dihedral equivalences
+	if (dihedral_equivalent_to_v(old_symbol, square->size)) {
+	  equivalent_to_v_used--;
+	}
+	if (dihedral_equivalent_to_u(old_symbol, square->size)) {
+	  equivalent_to_u_used--;
+	}
+	if (dihedral_equivalent_to_v(symbol, square->size)) {
+	  equivalent_to_v_used++;
+	}
+	if (dihedral_equivalent_to_u(symbol, square->size)) {
+	  equivalent_to_u_used++;
 	}
   } else {
 	// old value is available
@@ -217,15 +245,6 @@ void print_success(latin_grid square) {
 	  report2(square_A, square_B);
 	}
 	
-	/*
-	if (first_found == NULL) {
-	  first_found = square_copy(square);
-	} else {
-	  if (second_found == NULL) {
-	  second_found = square_copy(square);
-	  }
-	}*/
-  
 	total_found++;
   } else {
 	coord position = new_coord();
@@ -246,8 +265,6 @@ void loop(size) {
   }
   
   printf("-- %d --\n", size);
-  first_found = NULL;
-  second_found = NULL;
   total_found = 0;
   row_used_A = row_used_B = diff_used_A = diff_used_B = diff_used_orthogonal = 0;
   diff_used_diagonal_AB = calloc(size + 1, sizeof(int));
@@ -261,10 +278,6 @@ void loop(size) {
   position->col = 1;
   backtrack(square_A, position);
   printf("\nfound %i of size %i\n", total_found, size);
-  if (first_found != NULL && second_found != NULL) {
-	printf("\ncomparing squares:\n");
-	report2(first_found, second_found);
-  }
 }
 
 void finish() {}
