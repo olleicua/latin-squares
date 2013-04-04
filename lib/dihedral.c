@@ -36,6 +36,9 @@ int dihedral_multiply(int a, int b, int size) {
 
 // calculate the greatest common divisor.  b is assumed to be smaller than a.
 int gcd(int a, int b) {
+  if (b == 0) {
+	return 0;
+  }
   if (a % b == 0) {
 	return b;
   }
@@ -54,5 +57,5 @@ bool dihedral_equivalent_to_u(int x, int size) {
   if (x & 1) {
 	return false;
   }
-  return (x < size) && gcd(x >> 1, size >> 1) == 1;
+  return (x < size) && gcd(size >> 1, x >> 1) == 1;
 }

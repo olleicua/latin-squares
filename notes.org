@@ -3,3 +3,18 @@ Metrics that we care about
 - A + B + D
 - A + B + C + D + E
 - D + E for the best 2A + B + C
+
+Generating arrays:
+
+search for r rows (r = 2 or 3) with the constraints that the
+differences as calculated by (x1, y1) - (x2, y2) = (x1 - y1, x2, y2)
+being unique in all r rows an that each column have one of each label
+
+symmetry
+- both squares can start with (0,0), (0,1), (0,2) as their first column
+- the first square first row can have the same coprime constraint as the
+  terrace method
+- the first square first row first non zero label can be 1.
+
+b = c = 0
+find best a then best d/e 
