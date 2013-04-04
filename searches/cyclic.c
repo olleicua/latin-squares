@@ -1,5 +1,5 @@
 #include "../lib/backtrack.c"
-#include "../lib/dihedral.c"
+#include "../lib/cyclic.c"
 
 // current state
 latin_grid square_A, square_B;
@@ -17,7 +17,7 @@ long diff_used_A, diff_used_B, diff_used_orthogonal;
 int *diff_used_diagonal_AB, *diff_used_diagonal_BA;
 
 int least_AB_repeats, least_diagonal_repeats, total_found,
-  equivalent_to_v_used, equivalent_to_u_used;
+  equivalent_to_1_used;
 
 int diagonal_repeat_count(int *repeats) {
   int i, result = 0;
@@ -40,7 +40,7 @@ void fill_in_square(latin_grid square) {
   for (row = 1; row < square->size; row++) {
 	for (col = 0; col < square->size; col++) {
 	  CELL(square, row, col) =
-		dihedral_multiply(row, CELL(square, 0, col), square->size);
+		cyclic_multiply(row, CELL(square, 0, col), square->size);
 	}
   }
 }
@@ -52,8 +52,8 @@ int row_difference(latin_grid square, coord position, int symbol) {
 	return square->size;
   }
   if (position->col > 0) {
-	return dihedral_divide(symbol, CELL(square, position->row, position->col - 1),
-						   square->size);
+	return cyclic_divide(symbol, CELL(square, position->row, position->col - 1),
+						 square->size);
   }
   return square->size;
 }
@@ -64,8 +64,8 @@ int orthogonal_difference(coord position, int symbol) {
   if (symbol >= square_A->size) {
 	return square_A->size;
   }
-  return dihedral_divide(CELL(square_A, position->row, position->col),
-						 symbol, square_A->size);
+  return cyclic_divide(CELL(square_A, position->row, position->col),
+					   symbol, square_A->size);
 }
 
 // use group theory to determine the "difference" between the specified symbol
@@ -75,8 +75,8 @@ int diagonal_AB_difference(coord position, int symbol) {
 	return square_A->size;
   }
   if (position->col > 0) {
-	return dihedral_divide(CELL(square_A, position->row, position->col - 1),
-						   symbol, square_A->size);
+	return cyclic_divide(CELL(square_A, position->row, position->col - 1),
+						 symbol, square_A->size);
   }
   return square_A->size;
 }
@@ -88,8 +88,8 @@ int diagonal_BA_difference(coord position, int symbol) {
 	return square_A->size;
   }
   if (position->col < square_A->size - 1) {
-	return dihedral_divide(CELL(square_A, position->row, position->col + 1),
-						   symbol, square_A->size);
+	return cyclic_divide(CELL(square_A, position->row, position->col + 1),
+						 symbol, square_A->size);
   }
   return square_A->size;
 }
@@ -125,18 +125,13 @@ coord next_coord(latin_grid square, coord position) {
 bool is_allowed(latin_grid square, coord position, int symbol) {
   
   if (square == square_A) {
-	if (equivalent_to_v_used == 0 &&
-		dihedral_equivalent_to_v(symbol, square->size) &&
+	if (equivalent_to_1_used == 0 &&
+		cyclic_equivalent_to_1(symbol, square->size) &&
 		symbol != 1) {
 	  return false;
 	}
-	if (equivalent_to_u_used == 0 &&
-		dihedral_equivalent_to_u(symbol, square->size) &&
-		symbol != 2) {
-	  return false;
-	}
   }
-    
+  
   long symbol_mask = 1 << symbol;
   long row_diff_mask = 1 << row_difference(square, position, symbol);
   
@@ -169,6 +164,7 @@ void grid_write(latin_grid square, coord position, int symbol) {
   int old_symbol = CELL(square, position->row, position->col);
   
   if (square == square_A) {
+
 	// old value is available
 	set_used(&row_used_A, old_symbol, false);
 	
@@ -181,18 +177,12 @@ void grid_write(latin_grid square, coord position, int symbol) {
 	  set_used(&diff_used_A, row_difference(square, position, symbol), true);
 	}
 	
-	// dihedral equivalences
-	if (dihedral_equivalent_to_v(old_symbol, square->size)) {
-	  equivalent_to_v_used--;
+	// cyclic equivalences
+	if (cyclic_equivalent_to_1(old_symbol, square->size)) {
+	  equivalent_to_1_used--;
 	}
-	if (dihedral_equivalent_to_u(old_symbol, square->size)) {
-	  equivalent_to_u_used--;
-	}
-	if (dihedral_equivalent_to_v(symbol, square->size)) {
-	  equivalent_to_v_used++;
-	}
-	if (dihedral_equivalent_to_u(symbol, square->size)) {
-	  equivalent_to_u_used++;
+	if (cyclic_equivalent_to_1(symbol, square->size)) {
+	  equivalent_to_1_used++;
 	}
   } else {
 	// old value is available
@@ -257,15 +247,15 @@ void init() {
 
 void loop(size) {
   
-  // ignore orders besides 12, 16, and 20
-  if (size != 12 && size != 16 && size != 20) {
+  // ignore odd orders
+  if (size & 1) {
 	return;
   }
   
   printf("-- %d --\n", size);
   total_found = 0;
   row_used_A = row_used_B = diff_used_A = diff_used_B = diff_used_orthogonal =
-	equivalent_to_v_used = equivalent_to_u_used = 0;
+	equivalent_to_1_used = 0;
   diff_used_diagonal_AB = calloc(size + 1, sizeof(int));
   diff_used_diagonal_BA = calloc(size + 1, sizeof(int));
   least_AB_repeats = least_diagonal_repeats = size;
