@@ -13,13 +13,13 @@ long row_used_A, row_used_B;
 // track of the availability of pair differences in each square.  The nth bit of
 // this array is a 1 iff the difference of n is already used in adjacent pairs
 // in that square or in an orthogonal pair.
-long diff_used_A, diff_used_B, diff_used_orthogonal;
-int *diff_used_diagonal_AB, *diff_used_diagonal_BA;
+long diff_used_A, diff_used_B;
+int *diff_used_orthogonal, *diff_used_diagonal_AB, *diff_used_diagonal_BA;
 
-int least_AB_repeats, least_diagonal_repeats, total_found,
-  equivalent_to_1_used;
+int least_AB_repeats, least_diagonal_repeats, least_orthogonal_repeats,
+  total_found, equivalent_to_1_used;
 
-int diagonal_repeat_count(int *repeats) {
+int repeat_count(int *repeats) {
   int i, result = 0;
   for (i = 0; i < square_A->size; i++) {
 	if (repeats[i] < 0) {
@@ -102,11 +102,13 @@ bool is_finished(latin_grid square, coord position) {
 // backtrack if a better diagonal result exists
 bool is_terminal(latin_grid square, coord position) {
   if (square == square_B) {
-	int AB_repeats = diagonal_repeat_count(diff_used_diagonal_AB);
+	int orthogonal_repeats = repeat_count(diff_used_orthogonal);
+	int AB_repeats = repeat_count(diff_used_diagonal_AB);
 	int total_diagonal_repeats =
-	  AB_repeats + diagonal_repeat_count(diff_used_diagonal_BA);
+	  AB_repeats + repeat_count(diff_used_diagonal_BA);
 	if (AB_repeats >= least_AB_repeats &&
-		total_diagonal_repeats >= least_diagonal_repeats) {
+		total_diagonal_repeats >= least_diagonal_repeats &&
+		orthogonal_repeats >= least_orthogonal_repeats) {
 	  return true;
 	}
   }
@@ -135,14 +137,13 @@ bool is_allowed(latin_grid square, coord position, int symbol) {
   long symbol_mask = 1 << symbol;
   long row_diff_mask = 1 << row_difference(square, position, symbol);
   
+  // TODO: DRY this
   if (square == square_A) {
 	return ! ((symbol_mask & row_used_A) ||
 			  ((position->col > 0) ? row_diff_mask & diff_used_A : 0));
   } else {
-	long orthogonal_diff_mask = 1 << orthogonal_difference(position, symbol);
 	return ! ((symbol_mask & row_used_B) ||
-			  ((position->col > 0) ? row_diff_mask & diff_used_B : 0) ||
-			  (orthogonal_diff_mask & diff_used_orthogonal));
+			  ((position->col > 0) ? row_diff_mask & diff_used_B : 0));
   }
 }
 
@@ -192,10 +193,8 @@ void grid_write(latin_grid square, coord position, int symbol) {
 	set_used(&row_used_B, symbol, true);
 	
 	// diffs
-	set_used(&diff_used_orthogonal,
-			 orthogonal_difference(position, old_symbol), false);
-	set_used(&diff_used_orthogonal,
-			 orthogonal_difference(position, symbol), true);
+	diff_used_orthogonal[orthogonal_difference(position, old_symbol)]--;
+	diff_used_orthogonal[orthogonal_difference(position, symbol)]++;
 	if (position->col > 0) {
 	  set_used(&diff_used_B,
 			   row_difference(square, position, old_symbol), false);
@@ -215,9 +214,14 @@ void grid_write(latin_grid square, coord position, int symbol) {
 void print_success(latin_grid square) {
   if (square == square_B) {
 	bool new_result = false;
-	int AB_repeats = diagonal_repeat_count(diff_used_diagonal_AB);
+	int orthogonal_repeats = repeat_count(diff_used_orthogonal);
+	int AB_repeats = repeat_count(diff_used_diagonal_AB);
 	int total_diagonal_repeats =
-	  AB_repeats + diagonal_repeat_count(diff_used_diagonal_BA);
+	  AB_repeats + repeat_count(diff_used_diagonal_BA);
+	if (orthogonal_repeats < least_orthogonal_repeats) {
+	  least_orthogonal_repeats = orthogonal_repeats;
+	  new_result = true;
+	}
 	if (AB_repeats < least_AB_repeats) {
 	  least_AB_repeats = AB_repeats;
 	  new_result = true;
@@ -254,10 +258,12 @@ void loop(size) {
   
   printf("-- %d --\n", size);
   total_found = 0;
-  row_used_A = row_used_B = diff_used_A = diff_used_B = diff_used_orthogonal =
+  row_used_A = row_used_B = diff_used_A = diff_used_B =
 	equivalent_to_1_used = 0;
+  diff_used_orthogonal = calloc(size + 1, sizeof(int));
   diff_used_diagonal_AB = calloc(size + 1, sizeof(int));
   diff_used_diagonal_BA = calloc(size + 1, sizeof(int));
+  least_orthogonal_repeats = 2;
   least_AB_repeats = least_diagonal_repeats = size;
   square_A = new_latin_grid(size);
   square_B = new_latin_grid(size);
