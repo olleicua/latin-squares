@@ -8,7 +8,7 @@ Generating arrays:
 
 search for r rows (r = 2 or 3) with the constraints that the
 differences as calculated by (x1, y1) - (x2, y2) = (x1 - y1, x2, y2)
-being unique in all r rows an that each column have one of each label
+being unique in all r rows and that each column have one of each label
 
 symmetry
 - both squares can start with (0,0), (0,1), (0,2) as their first column

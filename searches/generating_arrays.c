@@ -1,14 +1,17 @@
 #include "../lib/backtrack.c"
-#include "../lib/cyclic.c"
+#include "../lib/generating_arrays.c"
 
 // current state
 latin_grid square_A, square_B;
 coord position;
+int rows;
+
+// TODO: revise these comments
 
 // row_used_A and row_used_B are bit arrays to keep track of symbol availability
 // in the top row of each square. The nth bit of this array is a 1 iff symbol n
 // is already taken in that square.
-long row_used_A, row_used_B;
+long *row_used_A, *row_used_B;
 // diff_used_A, diff_used_B, and diff_used_orthogonal are arrays of bits to keep
 // track of the availability of pair differences in each square.  The nth bit of
 // this array is a 1 iff the difference of n is already used in adjacent pairs
@@ -17,7 +20,7 @@ long diff_used_A, diff_used_B;
 int *diff_used_orthogonal, *diff_used_diagonal_AB, *diff_used_diagonal_BA;
 
 int least_AB_repeats, least_diagonal_repeats, least_orthogonal_repeats,
-  total_found, equivalent_to_1_used;
+  total_found, equivalent_to_value1_used, equivalent_to_label1_used;
 
 int repeat_count(int *repeats) {
   int i, result = 0;
@@ -34,64 +37,67 @@ int repeat_count(int *repeats) {
   return result;
 }
 
-// use group theory to fill in the rest of the square from the first row
+// fill in the rest of the square from the rows
 void fill_in_square(latin_grid square) {
   int row, col;
-  for (row = 1; row < square->size; row++) {
+  for (row = rows; row < square->size; row++) {
 	for (col = 0; col < square->size; col++) {
-	  CELL(square, row, col) =
-		cyclic_multiply(row, CELL(square, 0, col), square->size);
+	  CELL(square, row, col) = ga_cycle(CELL(square, row % rows, col),
+										row / rows,
+										rows);
 	}
   }
 }
 
-// use group theory to determine the "difference" between the specified symbol
-// and the symbol in the space to the left of the specified position
+// determine the "difference" between the specified symbol and the symbol in the
+// space to the left of the specified position
 int row_difference(latin_grid square, coord position, int symbol) {
   if (symbol >= square->size) {
-	return square->size;
+	return square->size * rows;
   }
   if (position->col > 0) {
-	return cyclic_divide(symbol, CELL(square, position->row, position->col - 1),
+	return ga_difference(CELL(square, position->row, position->col - 1),
+						 symbol,
+						 rows,
 						 square->size);
   }
-  return square->size;
+  return square->size * rows;
 }
 
-// use group theory to determine the "difference" between the specified symbol
-// and the symbol in the specified position in square_A
+// determine the "difference" between the specified symbol and the symbol in the
+// specified position in square_A
 int orthogonal_difference(coord position, int symbol) {
   if (symbol >= square_A->size) {
-	return square_A->size;
+	return square_A->size * rows;
   }
-  return cyclic_divide(CELL(square_A, position->row, position->col),
-					   symbol, square_A->size);
+  return ga_difference(CELL(square_A, position->row, position->col),
+					   symbol,
+					   rows,
+					   square_A->size);
 }
 
-// use group theory to determine the "difference" between the specified symbol
-// and the symbol to the left of the specified position in square_A
+// determine the "difference" between the specified symbol and the symbol to the
+// left of the specified position in square_A
 int diagonal_AB_difference(coord position, int symbol) {
-  if (symbol >= square_A->size) {
-	return square_A->size;
+  if (symbol < square_A->size && position->col > 0) {
+	return ga_difference(CELL(square_A, position->row, position->col - 1),
+						 symbol,
+						 rows,
+						 square_A->size);
   }
-  if (position->col > 0) {
-	return cyclic_divide(CELL(square_A, position->row, position->col - 1),
-						 symbol, square_A->size);
-  }
-  return square_A->size;
+  return square_A->size * rows;
 }
 
 // use group theory to determine the "difference" between the specified symbol
 // and the symbol to the right of the specified position in square_A
 int diagonal_BA_difference(coord position, int symbol) {
-  if (symbol >= square_A->size) {
-	return square_A->size;
+  if (symbol < square_A->size && position->col < square_A->size - 1) {
+	return ga_difference(CELL(square_A, position->row, position->col + 1),
+						 symbol,
+						 rows,
+						 square_A->size);
   }
-  if (position->col < square_A->size - 1) {
-	return cyclic_divide(CELL(square_A, position->row, position->col + 1),
-						 symbol, square_A->size);
-  }
-  return square_A->size;
+  return square_A->size * rows;
 }
 
 // just search the first row
@@ -117,8 +123,12 @@ bool is_terminal(latin_grid square, coord position) {
 
 coord next_coord(latin_grid square, coord position) {
   coord result = new_coord();
-  result->row = position->row;
-  result->col = position->col + 1;
+  result->row = position->row + 1;
+  result->col = position->col;
+  if (result->row >= rows) {
+	result->row = 0;
+	result->col = position->col + 1;
+  }
   return result;
 }
 
@@ -126,10 +136,15 @@ coord next_coord(latin_grid square, coord position) {
 // and the "difference" between it and it's orthogonal pair are all unique
 bool is_allowed(latin_grid square, coord position, int symbol) {
   
-  if (square == square_A) {
-	if (equivalent_to_1_used == 0 &&
-		cyclic_equivalent_to_1(symbol, square->size) &&
-		symbol != 1) {
+  if (square == square_A && position->row == 0) {
+	if (equivalent_to_value1_used == 0 &&
+		ga_value_equivalent_to_1(symbol, rows, square->size) &&
+		ga_value(symbol, rows) != 1) {
+	  return false;
+	}
+	if (equivalent_to_label1_used == 0 &&
+		ga_label_equivalent_to_1(symbol, rows, square->size) &&
+		ga_label(symbol, rows) != 1) {
 	  return false;
 	}
   }
@@ -139,10 +154,10 @@ bool is_allowed(latin_grid square, coord position, int symbol) {
   
   // TODO: DRY this
   if (square == square_A) {
-	return ! ((symbol_mask & row_used_A) ||
+	return ! ((symbol_mask & row_used_A[position->row]) ||
 			  ((position->col > 0) ? row_diff_mask & diff_used_A : 0));
   } else {
-	return ! ((symbol_mask & row_used_B) ||
+	return ! ((symbol_mask & row_used_B[position->row]) ||
 			  ((position->col > 0) ? row_diff_mask & diff_used_B : 0));
   }
 }
@@ -167,10 +182,10 @@ void grid_write(latin_grid square, coord position, int symbol) {
   if (square == square_A) {
 
 	// old value is available
-	set_used(&row_used_A, old_symbol, false);
+	set_used(&row_used_A[position->row], old_symbol, false);
 	
 	// new value is not
-	set_used(&row_used_A, symbol, true);
+	set_used(&row_used_A[position->row], symbol, true);
 	
 	// diffs
 	if (position->col > 0) {
@@ -178,19 +193,27 @@ void grid_write(latin_grid square, coord position, int symbol) {
 	  set_used(&diff_used_A, row_difference(square, position, symbol), true);
 	}
 	
-	// cyclic equivalences
-	if (cyclic_equivalent_to_1(old_symbol, square->size)) {
-	  equivalent_to_1_used--;
-	}
-	if (cyclic_equivalent_to_1(symbol, square->size)) {
-	  equivalent_to_1_used++;
+	// equivalences
+	if (position->row == 0) {
+	  if (ga_label_equivalent_to_1(old_symbol, rows, square->size)) {
+		equivalent_to_label1_used--;
+	  }
+	  if (ga_label_equivalent_to_1(symbol, rows, square->size)) {
+		equivalent_to_label1_used++;
+	  }
+	  if (ga_value_equivalent_to_1(old_symbol, rows, square->size)) {
+		equivalent_to_value1_used--;
+	  }
+	  if (ga_value_equivalent_to_1(symbol, rows, square->size)) {
+		equivalent_to_value1_used++;
+	  }
 	}
   } else {
 	// old value is available
-	set_used(&row_used_B, old_symbol, false);
+	set_used(&row_used_B[position->row], old_symbol, false);
 	
 	// new value is not
-	set_used(&row_used_B, symbol, true);
+	set_used(&row_used_B[position->row], symbol, true);
 	
 	// diffs
 	diff_used_orthogonal[orthogonal_difference(position, old_symbol)]--;
@@ -242,7 +265,8 @@ void print_success(latin_grid square) {
 	total_found++;
   } else {
 	coord position = new_coord();
-	position->row = position->col = 0;
+	position->row = 0;
+	position->col = 1;
 	backtrack(square_B, position);
   }
 }
@@ -251,30 +275,41 @@ void init() {
   position = new_coord();
 }
 
-void loop(size) {
-  
-  // ignore odd orders
-  if (size & 1) {
-	return;
-  }
-  
-  printf("-- %d --\n", size);
+void run_search(size) {
+  printf("-- %d x %d --\n", rows, size);
   total_found = 0;
-  row_used_A = row_used_B = diff_used_A = diff_used_B =
-	equivalent_to_1_used = 0;
-  diff_used_orthogonal = calloc(size + 1, sizeof(int));
-  diff_used_diagonal_AB = calloc(size + 1, sizeof(int));
-  diff_used_diagonal_BA = calloc(size + 1, sizeof(int));
-  least_orthogonal_repeats = 2;
-  least_AB_repeats = least_diagonal_repeats = size;
+  row_used_A = calloc(3, sizeof(long));
+  row_used_B = calloc(3, sizeof(long));
+  diff_used_A = diff_used_B = equivalent_to_value1_used = equivalent_to_label1_used = 0;
+  diff_used_orthogonal = calloc((size * rows) + 1, sizeof(int));
+  diff_used_diagonal_AB = calloc((size * rows) + 1, sizeof(int));
+  diff_used_diagonal_BA = calloc((size * rows) + 1, sizeof(int));
+  least_orthogonal_repeats = size * rows;
+  least_AB_repeats = least_diagonal_repeats = size * rows;
   square_A = new_latin_grid(size);
   square_B = new_latin_grid(size);
   position->row = 0;
   position->col = 0;
-  grid_write(square_A, position, 0);
+  for (; position->row < rows; position->row++) {
+	grid_write(square_A, position, position->row);	
+	grid_write(square_B, position, position->row);	
+  }
+  position->row = 0;
   position->col = 1;
   backtrack(square_A, position);
   printf("\nfound %i of size %i\n", total_found, size);
+}
+
+void loop(size) {
+  
+  if (size % 2 == 0) {
+	rows = 2;
+	run_search(size);
+  }
+  if (size % 3 == 0) {
+	rows = 3;
+	run_search(size);
+  }
 }
 
 void finish() {}
