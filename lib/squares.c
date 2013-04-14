@@ -5,6 +5,9 @@
 #include "squares.h"
 #define CELL(square, row, col) ((square)->grid[(row)][(col)])
 
+bool logging;
+FILE *logfile;
+
 coord new_coord() {
   return malloc(sizeof(struct _coord));
 }
@@ -76,6 +79,18 @@ void print_latin_grid(latin_grid grid) {
 	printf("\n");
   }
   printf("\n");
+}
+
+void log_latin_grid(latin_grid grid) {
+  int row, col;
+  for (row = 0; row < grid->size; row++) {
+	for (col = 0; col < grid->size; col++) {
+	  int symbol = CELL(grid, row, col);
+	  fprintf(logfile, "%c", (symbol < 10) ? '0' + symbol : 'W' + symbol);
+	}
+	fprintf(logfile, "\n");
+  }
+  fprintf(logfile, "\n");
 }
 
 bool is_latin(latin_grid grid) {
@@ -215,6 +230,11 @@ void report2(latin_grid square1, latin_grid square2) {
 	print_latin_grid(square1);
 	print_latin_grid(square2);
   }
+  
+  if (logging) {
+	log_latin_grid(square1);
+	log_latin_grid(square2);
+  }
 
   int a = orthogonality_repeats(square1, square2);
   int b = row_completeness_repeats(square1);
@@ -230,4 +250,16 @@ void report2(latin_grid square1, latin_grid square2) {
 		 a + b + d,
 		 a + c + e,
 		 a + b + c + d + e);
+
+  if (logging) {
+	fprintf(logfile, "a:%d, b:%d, c:%d, d:%d, e:%d\n",
+			a, b, c, d, e);
+	
+	fprintf(logfile, "2a+b+c:%d, a+b+d:%d, a+c+e:%d, a+b+c+d+e:%d\n\n",
+			(2 * a) + b + c,
+			a + b + d,
+			a + c + e,
+			a + b + c + d + e);
+
+  }
 }

@@ -259,6 +259,9 @@ void loop(size) {
   }
   
   printf("-- %d --\n", size);
+  if (logging) {
+	fprintf(logfile, "-- %d --\n", size);
+  }
   total_found = 0;
   row_used_A = row_used_B = diff_used_A = diff_used_B =
 	equivalent_to_1_used = 0;
@@ -275,6 +278,9 @@ void loop(size) {
   position->col = 1;
   backtrack(square_A, position);
   printf("\nfound %i of size %i\n", total_found, size);
+  if (logging) {
+	fprintf(logfile, "\nfound %i of size %i\n", total_found, size);
+  }
 }
 
 void finish() {}

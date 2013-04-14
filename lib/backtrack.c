@@ -36,11 +36,20 @@ void init();
 void loop(int size);
 void finish();
 int main(int argc, char *argv[]) {
+  
   if ((argc > 2) && (strcmp(argv[2], "--quiet") == 0)) {
 	verbose = false;
   } else {
 	verbose = true;
   }
+  
+  if ((argc > 2) && (strcmp(argv[2], "--log") == 0)) {
+	logging = true;
+	logfile = fopen("log", "a");
+  } else {
+	logging = false;
+  }
+  
   init();
   int size;
   int max = 3;
