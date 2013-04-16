@@ -260,6 +260,6 @@ void report2(latin_grid square1, latin_grid square2) {
 			a + b + d,
 			a + c + e,
 			a + b + c + d + e);
-
+	fflush(logfile);
   }
 }

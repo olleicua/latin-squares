@@ -1,15 +1,17 @@
 // combine a value with a label to form a symbol
-int ga_combine_symbol(int value, int label, int rows) {
+int ga_combine_symbol(int value, int label, int rows, int size) {
   return (value * rows) + label;
 }
 
 // determine the first coordinate of a symbol
-int ga_value(int symbol, int rows) {
+int ga_value(int symbol, int rows, int size) {
+  if (symbol == size) return size;
   return symbol / rows;
 }
 
 // determine the second coordinate of a symbol
-int ga_label(int symbol, int rows) {
+int ga_label(int symbol, int rows, int size) {
+  if (symbol == size) return size;
   return symbol % rows;
 }
 
@@ -37,6 +39,7 @@ bool ga_label_equivalent_to_1(int symbol, int rows, int size) {
 // construct a three part vector [a, b, c] where a is the modular difference
 // between the two symbol1's label and c is symbol2's label
 int ga_difference(int symbol1, int symbol2, int rows, int size) {
+  if (symbol1 == size || symbol2 == size) return size * rows;
   int cycle_size = (size / rows);
   return ((((symbol1 / rows) - (symbol2 / rows) + cycle_size) % cycle_size)
 		  * rows * rows) +
@@ -46,8 +49,10 @@ int ga_difference(int symbol1, int symbol2, int rows, int size) {
 
 // generate a symbol with the same label and a value equal to the modular sum of
 // the symbol's value and the cycle parameter
-int ga_cycle(int symbol, int cycle, int rows) {
-  return ga_combine_symbol((symbol / rows + cycle) % rows,
+int ga_cycle(int symbol, int cycle, int rows, int size) {
+  if (symbol == size) return size;
+  return ga_combine_symbol((symbol / rows + cycle) % (size / rows),
 						   symbol % rows,
-						   rows);
+						   rows,
+						   size);
 }

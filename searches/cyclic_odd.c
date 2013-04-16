@@ -138,7 +138,6 @@ bool is_allowed(latin_grid square, coord position, int symbol) {
   
   long symbol_mask = 1 << symbol;
   
-  // TODO: DRY this
   if (square == square_A) {
 	return ! (symbol_mask & row_used_A);
   } else {
@@ -194,8 +193,8 @@ void grid_write(latin_grid square, coord position, int symbol) {
 	set_used(&row_used_B, symbol, true);
 	
 	// diffs
-	set_used(&diff_used_orthogonal, old_symbol, false);
-	set_used(&diff_used_orthogonal, symbol, true);
+	set_used(&diff_used_orthogonal, orthogonal_difference(position, old_symbol), false);
+	set_used(&diff_used_orthogonal, orthogonal_difference(position, symbol), true);
 	if (position->col > 0) {
 	  diff_used_B[row_difference(square, position, old_symbol)]--;
 	  diff_used_B[row_difference(square, position, symbol)]++;
@@ -261,7 +260,7 @@ void init() {
 void loop(size) {
   
   // ignore odd orders
-  if (size & 1 == 0) {
+  if ((size & 1) == 0) {
 	return;
   }
   

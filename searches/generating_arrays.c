@@ -24,7 +24,7 @@ int least_AB_repeats, least_diagonal_repeats, least_orthogonal_repeats,
 
 int repeat_count(int *repeats) {
   int i, result = 0;
-  for (i = 0; i < square_A->size; i++) {
+  for (i = 0; i < square_A->size * rows; i++) {
 	if (repeats[i] < 0) {
 	  printf("ASSERT FAILS! : %dth element is %d and should not be negative\n",
 			 i, repeats[i]);
@@ -44,7 +44,8 @@ void fill_in_square(latin_grid square) {
 	for (col = 0; col < square->size; col++) {
 	  CELL(square, row, col) = ga_cycle(CELL(square, row % rows, col),
 										row / rows,
-										rows);
+										rows,
+										square->size);
 	}
   }
 }
@@ -112,9 +113,10 @@ bool is_terminal(latin_grid square, coord position) {
 	int AB_repeats = repeat_count(diff_used_diagonal_AB);
 	int total_diagonal_repeats =
 	  AB_repeats + repeat_count(diff_used_diagonal_BA);
-	if (AB_repeats >= least_AB_repeats &&
-		total_diagonal_repeats >= least_diagonal_repeats &&
-		orthogonal_repeats >= least_orthogonal_repeats) {
+	if (orthogonal_repeats > least_orthogonal_repeats ||
+		(AB_repeats >= least_AB_repeats &&
+		 total_diagonal_repeats >= least_diagonal_repeats &&
+		 orthogonal_repeats == least_orthogonal_repeats)) {
 	  return true;
 	}
   }
@@ -139,12 +141,22 @@ bool is_allowed(latin_grid square, coord position, int symbol) {
   if (square == square_A && position->row == 0) {
 	if (equivalent_to_value1_used == 0 &&
 		ga_value_equivalent_to_1(symbol, rows, square->size) &&
-		ga_value(symbol, rows) != 1) {
+		ga_value(symbol, rows, square->size) != 1) {
 	  return false;
 	}
 	if (equivalent_to_label1_used == 0 &&
 		ga_label_equivalent_to_1(symbol, rows, square->size) &&
-		ga_label(symbol, rows) != 1) {
+		ga_label(symbol, rows, square->size) != 1) {
+	  return false;
+	}
+  }
+  
+  // labels in columns must be unique
+  int i;
+  for (i = 0; i < rows; i++) {
+	if (i != position->row &&
+		ga_label(CELL(square, i, position->col), rows, square->size) ==
+		ga_label(symbol, rows, square->size)) {
 	  return false;
 	}
   }
@@ -241,8 +253,10 @@ void print_success(latin_grid square) {
 	int AB_repeats = repeat_count(diff_used_diagonal_AB);
 	int total_diagonal_repeats =
 	  AB_repeats + repeat_count(diff_used_diagonal_BA);
+	
 	if (orthogonal_repeats < least_orthogonal_repeats) {
 	  least_orthogonal_repeats = orthogonal_repeats;
+	  least_AB_repeats = least_diagonal_repeats = square->size * rows;
 	  new_result = true;
 	}
 	if (AB_repeats < least_AB_repeats &&
@@ -280,12 +294,13 @@ void run_search(size) {
   total_found = 0;
   row_used_A = calloc(3, sizeof(long));
   row_used_B = calloc(3, sizeof(long));
-  diff_used_A = diff_used_B = equivalent_to_value1_used = equivalent_to_label1_used = 0;
+  diff_used_A = diff_used_B = equivalent_to_value1_used =
+	equivalent_to_label1_used = 0;
   diff_used_orthogonal = calloc((size * rows) + 1, sizeof(int));
   diff_used_diagonal_AB = calloc((size * rows) + 1, sizeof(int));
   diff_used_diagonal_BA = calloc((size * rows) + 1, sizeof(int));
-  least_orthogonal_repeats = size * rows;
-  least_AB_repeats = least_diagonal_repeats = size * rows;
+  least_orthogonal_repeats = least_AB_repeats =
+	least_diagonal_repeats = size * rows;
   square_A = new_latin_grid(size);
   square_B = new_latin_grid(size);
   position->row = 0;
