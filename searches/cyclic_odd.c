@@ -274,7 +274,7 @@ void loop(size) {
   diff_used_B = calloc(size + 1, sizeof(int));
   diff_used_diagonal_AB = calloc(size + 1, sizeof(int));
   diff_used_diagonal_BA = calloc(size + 1, sizeof(int));
-  least_row_repeats_A = least_row_repeats_B = 2;
+  least_row_repeats_A = least_row_repeats_B = 1;
   least_AB_repeats = least_diagonal_repeats = size;
   square_A = new_latin_grid(size);
   square_B = new_latin_grid(size);
