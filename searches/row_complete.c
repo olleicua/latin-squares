@@ -12,7 +12,7 @@ int* pair_used;
 
 int previous_cell(latin_grid square, coord position) {
   if (position->col > 0) {
-	return CELL(square, position->row, position->col - 1);
+    return CELL(square, position->row, position->col - 1);
   }
   return square->size;
 }
@@ -26,10 +26,10 @@ bool is_terminal(latin_grid square, coord position) {
   
   int pair_possibilities = 0;
   if (position->col >= 1) {
-	pair_possibilities = mask & pair_used[previous_cell(square, position)];
+    pair_possibilities = mask & pair_used[previous_cell(square, position)];
   }
   int used_union = (mask & row_used[position->row]) |
-	(mask & col_used[position->col]) | pair_possibilities;
+    (mask & col_used[position->col]) | pair_possibilities;
   return used_union == mask;
 }
 
@@ -38,8 +38,8 @@ coord next_coord(latin_grid square, coord position) {
   result->row = position->row + 1;
   result->col = position->col;
   if (result->row >= square->size) {
-	result->row = 1;
-	result->col = position->col + 1;
+    result->row = 1;
+    result->col = position->col + 1;
   }
   return result;
 }
@@ -49,21 +49,21 @@ bool is_allowed(latin_grid square, coord position, int symbol) {
   
   int pair_possibilities = 0;
   if (position->col > 0) {
-	pair_possibilities = mask & pair_used[previous_cell(square, position)];
+    pair_possibilities = mask & pair_used[previous_cell(square, position)];
   }
   
   return ! ((row_used[position->row] & mask) ||
-			(col_used[position->col] & mask) ||
-			pair_possibilities);
+            (col_used[position->col] & mask) ||
+            pair_possibilities);
 }
 
 void set_used(int* array, int a_index, int b_index, bool val) {
   if (val) {
-	int mask = 1 << b_index;
-	array[a_index] |= mask; // set the value to true
+    int mask = 1 << b_index;
+    array[a_index] |= mask; // set the value to true
   } else {
-	int mask = ~(1 << b_index);
-	array[a_index] &= mask; // set the value to false
+    int mask = ~(1 << b_index);
+    array[a_index] &= mask; // set the value to false
   }
 }
 
@@ -77,8 +77,8 @@ void grid_write(latin_grid square, coord position, int symbol) {
   set_used(col_used, position->col, symbol, true);
   // adjacent pairs
   if (position->col > 0) {
-	set_used(pair_used, previous_cell(square, position), old_symbol, false);
-	set_used(pair_used, previous_cell(square, position), symbol, true);
+    set_used(pair_used, previous_cell(square, position), old_symbol, false);
+    set_used(pair_used, previous_cell(square, position), symbol, true);
   }
   CELL(square, position->row, position->col) = symbol;
 }

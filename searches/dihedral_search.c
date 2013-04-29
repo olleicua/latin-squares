@@ -22,14 +22,14 @@ int least_AB_repeats, least_diagonal_repeats, total_found,
 int diagonal_repeat_count(int *repeats) {
   int i, result = 0;
   for (i = 0; i < square_A->size; i++) {
-	if (repeats[i] < 0) {
-	  printf("ASSERT FAILS! : %dth element is %d and should not be negative\n",
-			 i, repeats[i]);
-	  exit(0);
-	}
-	if (repeats[i] > 0) {
-	  result += repeats[i] - 1;
-	}
+    if (repeats[i] < 0) {
+      printf("ASSERT FAILS! : %dth element is %d and should not be negative\n",
+             i, repeats[i]);
+      exit(0);
+    }
+    if (repeats[i] > 0) {
+      result += repeats[i] - 1;
+    }
   }
   return result;
 }
@@ -38,10 +38,10 @@ int diagonal_repeat_count(int *repeats) {
 void fill_in_square(latin_grid square) {
   int row, col;
   for (row = 1; row < square->size; row++) {
-	for (col = 0; col < square->size; col++) {
-	  CELL(square, row, col) =
-		dihedral_multiply(row, CELL(square, 0, col), square->size);
-	}
+    for (col = 0; col < square->size; col++) {
+      CELL(square, row, col) =
+        dihedral_multiply(row, CELL(square, 0, col), square->size);
+    }
   }
 }
 
@@ -49,11 +49,11 @@ void fill_in_square(latin_grid square) {
 // and the symbol in the space to the left of the specified position
 int row_difference(latin_grid square, coord position, int symbol) {
   if (symbol >= square->size) {
-	return square->size;
+    return square->size;
   }
   if (position->col > 0) {
-	return dihedral_divide(symbol, CELL(square, position->row, position->col - 1),
-						   square->size);
+    return dihedral_divide(symbol, CELL(square, position->row, position->col - 1),
+                           square->size);
   }
   return square->size;
 }
@@ -62,21 +62,21 @@ int row_difference(latin_grid square, coord position, int symbol) {
 // and the symbol in the specified position in square_A
 int orthogonal_difference(coord position, int symbol) {
   if (symbol >= square_A->size) {
-	return square_A->size;
+    return square_A->size;
   }
   return dihedral_divide(CELL(square_A, position->row, position->col),
-						 symbol, square_A->size);
+                         symbol, square_A->size);
 }
 
 // use group theory to determine the "difference" between the specified symbol
 // and the symbol to the left of the specified position in square_A
 int diagonal_AB_difference(coord position, int symbol) {
   if (symbol >= square_A->size) {
-	return square_A->size;
+    return square_A->size;
   }
   if (position->col > 0) {
-	return dihedral_divide(CELL(square_A, position->row, position->col - 1),
-						   symbol, square_A->size);
+    return dihedral_divide(CELL(square_A, position->row, position->col - 1),
+                           symbol, square_A->size);
   }
   return square_A->size;
 }
@@ -85,11 +85,11 @@ int diagonal_AB_difference(coord position, int symbol) {
 // and the symbol to the right of the specified position in square_A
 int diagonal_BA_difference(coord position, int symbol) {
   if (symbol >= square_A->size) {
-	return square_A->size;
+    return square_A->size;
   }
   if (position->col < square_A->size - 1) {
-	return dihedral_divide(CELL(square_A, position->row, position->col + 1),
-						   symbol, square_A->size);
+    return dihedral_divide(CELL(square_A, position->row, position->col + 1),
+                           symbol, square_A->size);
   }
   return square_A->size;
 }
@@ -102,13 +102,13 @@ bool is_finished(latin_grid square, coord position) {
 // backtrack if a better diagonal result exists
 bool is_terminal(latin_grid square, coord position) {
   if (square == square_B) {
-	int AB_repeats = diagonal_repeat_count(diff_used_diagonal_AB);
-	int total_diagonal_repeats =
-	  AB_repeats + diagonal_repeat_count(diff_used_diagonal_BA);
-	if (AB_repeats >= least_AB_repeats &&
-		total_diagonal_repeats >= least_diagonal_repeats) {
-	  return true;
-	}
+    int AB_repeats = diagonal_repeat_count(diff_used_diagonal_AB);
+    int total_diagonal_repeats =
+      AB_repeats + diagonal_repeat_count(diff_used_diagonal_BA);
+    if (AB_repeats >= least_AB_repeats &&
+        total_diagonal_repeats >= least_diagonal_repeats) {
+      return true;
+    }
   }
   return false;
 }
@@ -125,39 +125,39 @@ coord next_coord(latin_grid square, coord position) {
 bool is_allowed(latin_grid square, coord position, int symbol) {
   
   if (square == square_A) {
-	if (equivalent_to_v_used == 0 &&
-		dihedral_equivalent_to_v(symbol, square->size) &&
-		symbol != 1) {
-	  return false;
-	}
-	if (equivalent_to_u_used == 0 &&
-		dihedral_equivalent_to_u(symbol, square->size) &&
-		symbol != 2) {
-	  return false;
-	}
+    if (equivalent_to_v_used == 0 &&
+        dihedral_equivalent_to_v(symbol, square->size) &&
+        symbol != 1) {
+      return false;
+    }
+    if (equivalent_to_u_used == 0 &&
+        dihedral_equivalent_to_u(symbol, square->size) &&
+        symbol != 2) {
+      return false;
+    }
   }
     
   long symbol_mask = 1 << symbol;
   long row_diff_mask = 1 << row_difference(square, position, symbol);
   
   if (square == square_A) {
-	return ! ((symbol_mask & row_used_A) ||
-			  ((position->col > 0) ? row_diff_mask & diff_used_A : 0));
+    return ! ((symbol_mask & row_used_A) ||
+              ((position->col > 0) ? row_diff_mask & diff_used_A : 0));
   } else {
-	long orthogonal_diff_mask = 1 << orthogonal_difference(position, symbol);
-	return ! ((symbol_mask & row_used_B) ||
-			  ((position->col > 0) ? row_diff_mask & diff_used_B : 0) ||
-			  (orthogonal_diff_mask & diff_used_orthogonal));
+    long orthogonal_diff_mask = 1 << orthogonal_difference(position, symbol);
+    return ! ((symbol_mask & row_used_B) ||
+              ((position->col > 0) ? row_diff_mask & diff_used_B : 0) ||
+              (orthogonal_diff_mask & diff_used_orthogonal));
   }
 }
 
 void set_used(long* array, int index, bool val) {
   if (val) {
-	long mask = 1 << index;
-	array[0] |= mask; // set the value to true
+    long mask = 1 << index;
+    array[0] |= mask; // set the value to true
   } else {
-	long mask = ~(1 << index);
-	array[0] &= mask; // set the value to false
+    long mask = ~(1 << index);
+    array[0] &= mask; // set the value to false
   }
 }
 
@@ -169,86 +169,86 @@ void grid_write(latin_grid square, coord position, int symbol) {
   int old_symbol = CELL(square, position->row, position->col);
   
   if (square == square_A) {
-	// old value is available
-	set_used(&row_used_A, old_symbol, false);
-	
-	// new value is not
-	set_used(&row_used_A, symbol, true);
-	
-	// diffs
-	if (position->col > 0) {
-	  set_used(&diff_used_A, row_difference(square, position, old_symbol), false);
-	  set_used(&diff_used_A, row_difference(square, position, symbol), true);
-	}
-	
-	// dihedral equivalences
-	if (dihedral_equivalent_to_v(old_symbol, square->size)) {
-	  equivalent_to_v_used--;
-	}
-	if (dihedral_equivalent_to_u(old_symbol, square->size)) {
-	  equivalent_to_u_used--;
-	}
-	if (dihedral_equivalent_to_v(symbol, square->size)) {
-	  equivalent_to_v_used++;
-	}
-	if (dihedral_equivalent_to_u(symbol, square->size)) {
-	  equivalent_to_u_used++;
-	}
+    // old value is available
+    set_used(&row_used_A, old_symbol, false);
+    
+    // new value is not
+    set_used(&row_used_A, symbol, true);
+    
+    // diffs
+    if (position->col > 0) {
+      set_used(&diff_used_A, row_difference(square, position, old_symbol), false);
+      set_used(&diff_used_A, row_difference(square, position, symbol), true);
+    }
+    
+    // dihedral equivalences
+    if (dihedral_equivalent_to_v(old_symbol, square->size)) {
+      equivalent_to_v_used--;
+    }
+    if (dihedral_equivalent_to_u(old_symbol, square->size)) {
+      equivalent_to_u_used--;
+    }
+    if (dihedral_equivalent_to_v(symbol, square->size)) {
+      equivalent_to_v_used++;
+    }
+    if (dihedral_equivalent_to_u(symbol, square->size)) {
+      equivalent_to_u_used++;
+    }
   } else {
-	// old value is available
-	set_used(&row_used_B, old_symbol, false);
-	
-	// new value is not
-	set_used(&row_used_B, symbol, true);
-	
-	// diffs
-	set_used(&diff_used_orthogonal,
-			 orthogonal_difference(position, old_symbol), false);
-	set_used(&diff_used_orthogonal,
-			 orthogonal_difference(position, symbol), true);
-	if (position->col > 0) {
-	  set_used(&diff_used_B,
-			   row_difference(square, position, old_symbol), false);
-	  set_used(&diff_used_B,
-			   row_difference(square, position, symbol), true);
-	  diff_used_diagonal_AB[diagonal_AB_difference(position, old_symbol)]--;
-	  diff_used_diagonal_AB[diagonal_AB_difference(position, symbol)]++;
-	}
-	if (position->col < square->size - 1) {
-	  diff_used_diagonal_BA[diagonal_BA_difference(position, old_symbol)]--;
-	  diff_used_diagonal_BA[diagonal_BA_difference(position, symbol)]++;
-	}
+    // old value is available
+    set_used(&row_used_B, old_symbol, false);
+    
+    // new value is not
+    set_used(&row_used_B, symbol, true);
+    
+    // diffs
+    set_used(&diff_used_orthogonal,
+             orthogonal_difference(position, old_symbol), false);
+    set_used(&diff_used_orthogonal,
+             orthogonal_difference(position, symbol), true);
+    if (position->col > 0) {
+      set_used(&diff_used_B,
+               row_difference(square, position, old_symbol), false);
+      set_used(&diff_used_B,
+               row_difference(square, position, symbol), true);
+      diff_used_diagonal_AB[diagonal_AB_difference(position, old_symbol)]--;
+      diff_used_diagonal_AB[diagonal_AB_difference(position, symbol)]++;
+    }
+    if (position->col < square->size - 1) {
+      diff_used_diagonal_BA[diagonal_BA_difference(position, old_symbol)]--;
+      diff_used_diagonal_BA[diagonal_BA_difference(position, symbol)]++;
+    }
   }
   CELL(square, position->row, position->col) = symbol;
 }
 
 void print_success(latin_grid square) {
   if (square == square_B) {
-	bool new_result = false;
-	int AB_repeats = diagonal_repeat_count(diff_used_diagonal_AB);
-	int total_diagonal_repeats =
-	  AB_repeats + diagonal_repeat_count(diff_used_diagonal_BA);
-	if (AB_repeats < least_AB_repeats) {
-	  least_AB_repeats = AB_repeats;
-	  new_result = true;
-	}
-	if (total_diagonal_repeats < least_diagonal_repeats) {
-	  least_diagonal_repeats = total_diagonal_repeats;
-	  new_result = true;
-	}
-	
-	if (verbose && new_result) {
-	  fill_in_square(square_A);
-	  fill_in_square(square_B);
-	  report2(square_A, square_B);
-	}
-	
-	total_found++;
+    bool new_result = false;
+    int AB_repeats = diagonal_repeat_count(diff_used_diagonal_AB);
+    int total_diagonal_repeats =
+      AB_repeats + diagonal_repeat_count(diff_used_diagonal_BA);
+    if (AB_repeats < least_AB_repeats) {
+      least_AB_repeats = AB_repeats;
+      new_result = true;
+    }
+    if (total_diagonal_repeats < least_diagonal_repeats) {
+      least_diagonal_repeats = total_diagonal_repeats;
+      new_result = true;
+    }
+    
+    if (verbose && new_result) {
+      fill_in_square(square_A);
+      fill_in_square(square_B);
+      report2(square_A, square_B);
+    }
+    
+    total_found++;
   } else {
-	coord position = new_coord();
-	position->row = 0;
-	position->col = 1;
-	backtrack(square_B, position);
+    coord position = new_coord();
+    position->row = 0;
+    position->col = 1;
+    backtrack(square_B, position);
   }
 }
 
@@ -260,13 +260,13 @@ void loop(size) {
   
   // ignore orders besides 12, 16, and 20
   if (size != 12 && size != 16 && size != 20) {
-	return;
+    return;
   }
   
   printf("-- %d --\n", size);
   total_found = 0;
   row_used_A = row_used_B = diff_used_A = diff_used_B = diff_used_orthogonal =
-	equivalent_to_v_used = equivalent_to_u_used = 0;
+    equivalent_to_v_used = equivalent_to_u_used = 0;
   diff_used_diagonal_AB = calloc(size + 1, sizeof(int));
   diff_used_diagonal_BA = calloc(size + 1, sizeof(int));
   least_AB_repeats = least_diagonal_repeats = size;

@@ -7,14 +7,14 @@
 // divide two members of the dihedral group of the specified size
 int dihedral_divide(int a, int b, int size) {
   int u_1 = a >> 1, v_1 = a & 1,
-	u_2 = b >> 1, v_2 = b & 1,
-	u_3, v_3;
+    u_2 = b >> 1, v_2 = b & 1,
+    u_3, v_3;
   if (v_1) {
-	u_3 = (size + u_1 - u_2) % (size >> 1);
-	v_3 = ! v_2;
+    u_3 = (size + u_1 - u_2) % (size >> 1);
+    v_3 = ! v_2;
   } else {
-	u_3 = (size + u_2 - u_1) % (size >> 1);
-	v_3 = v_2;
+    u_3 = (size + u_2 - u_1) % (size >> 1);
+    v_3 = v_2;
   }
   return (u_3 << 1) | v_3;
 }
@@ -22,14 +22,14 @@ int dihedral_divide(int a, int b, int size) {
 // multiply two members of the dihedral group of the specified size
 int dihedral_multiply(int a, int b, int size) {
   int u_1 = a >> 1, v_1 = a & 1,
-	u_2 = b >> 1, v_2 = b & 1,
-	u_3, v_3;
+    u_2 = b >> 1, v_2 = b & 1,
+    u_3, v_3;
   if (v_1) {
-	u_3 = (size + u_1 - u_2) % (size >> 1);
-	v_3 = ! v_2;
+    u_3 = (size + u_1 - u_2) % (size >> 1);
+    v_3 = ! v_2;
   } else {
-	u_3 = (u_1 + u_2) % (size >> 1);
-	v_3 = v_2;
+    u_3 = (u_1 + u_2) % (size >> 1);
+    v_3 = v_2;
   }
   return (u_3 << 1) | v_3;
 }
@@ -37,10 +37,10 @@ int dihedral_multiply(int a, int b, int size) {
 // calculate the greatest common divisor.  b is assumed to be smaller than a.
 int gcd(int a, int b) {
   if (b == 0) {
-	return 0;
+    return 0;
   }
   if (a % b == 0) {
-	return b;
+    return b;
   }
   return gcd(b, a % b);
 }
@@ -55,7 +55,7 @@ bool dihedral_equivalent_to_v(int x, int size) {
 // the group labels, to 2 (u1)
 bool dihedral_equivalent_to_u(int x, int size) {
   if (x & 1) {
-	return false;
+    return false;
   }
   return (x < size) && gcd(size >> 1, x >> 1) == 1;
 }

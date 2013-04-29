@@ -18,10 +18,10 @@ int ga_label(int symbol, int rows, int size) {
 // calculate the greatest common divisor.  b is assumed to be smaller than a.
 int gcd(int a, int b) {
   if (b == 0) {
-	return 0;
+    return 0;
   }
   if (a % b == 0) {
-	return b;
+    return b;
   }
   return gcd(b, a % b);
 }
@@ -42,9 +42,9 @@ int ga_difference(int symbol1, int symbol2, int rows, int size) {
   if (symbol1 == size || symbol2 == size) return size * rows;
   int cycle_size = (size / rows);
   return ((((symbol1 / rows) - (symbol2 / rows) + cycle_size) % cycle_size)
-		  * rows * rows) +
-	((symbol1 % rows) * rows) +
-	(symbol2 % rows);
+          * rows * rows) +
+    ((symbol1 % rows) * rows) +
+    (symbol2 % rows);
 }
 
 // generate a symbol with the same label and a value equal to the modular sum of
@@ -52,7 +52,7 @@ int ga_difference(int symbol1, int symbol2, int rows, int size) {
 int ga_cycle(int symbol, int cycle, int rows, int size) {
   if (symbol == size) return size;
   return ga_combine_symbol((symbol / rows + cycle) % (size / rows),
-						   symbol % rows,
-						   rows,
-						   size);
+                           symbol % rows,
+                           rows,
+                           size);
 }

@@ -16,12 +16,12 @@ latin_grid second_found;
 
 int difference(latin_grid square, coord position, int symbol) {
   if (symbol >= square->size) {
-	return square->size;
+    return square->size;
   }
   if (position->col > 0) {
-	return (square->size +
-			(symbol - CELL(square, position->row, position->col - 1)))
-	  % square->size;
+    return (square->size +
+            (symbol - CELL(square, position->row, position->col - 1)))
+      % square->size;
   }
   return square->size;
 }
@@ -47,16 +47,16 @@ bool is_allowed(latin_grid square, coord position, int symbol) {
   long diff_mask = 1 << difference(square, position, symbol);
   
   return ! ((symbol_mask & row_used) ||
-			((position->col > 0) ? diff_mask & diff_used : 0));
+            ((position->col > 0) ? diff_mask & diff_used : 0));
 }
 
 void set_used(long* array, int index, bool val) {
   if (val) {
-	long mask = 1 << index;
-	array[0] |= mask; // set the value to true
+    long mask = 1 << index;
+    array[0] |= mask; // set the value to true
   } else {
-	long mask = ~(1 << index);
-	array[0] &= mask; // set the value to false
+    long mask = ~(1 << index);
+    array[0] &= mask; // set the value to false
   }
 }
 
@@ -71,24 +71,24 @@ void grid_write(latin_grid square, coord position, int symbol) {
 
   // diffs
   if (position->col > 0) {
-	set_used(&diff_used, difference(square, position, old_symbol), false);
-	set_used(&diff_used, difference(square, position, symbol), true);
+    set_used(&diff_used, difference(square, position, old_symbol), false);
+    set_used(&diff_used, difference(square, position, symbol), true);
   }
   CELL(square, position->row, position->col) = symbol;
 }
 
 void print_success(latin_grid square) {
   if (verbose) {
-	fill_in_square(square);
-	print_latin_grid(square);
+    fill_in_square(square);
+    print_latin_grid(square);
   }
   
   if (first_found == NULL) {
-	first_found = square_copy(square);
+    first_found = square_copy(square);
   } else {
-	if (second_found == NULL) {
-	  second_found = square_copy(square);
-	}
+    if (second_found == NULL) {
+      second_found = square_copy(square);
+    }
   }
   
   total_found++;
@@ -117,8 +117,8 @@ void loop(size) {
   backtrack(square, position);
   printf("\nfound %i of size %i\n", total_found, _size);
   if (first_found != NULL && second_found != NULL) {
-	printf("\ncomparing squares:\n");
-	report2(first_found, second_found);
+    printf("\ncomparing squares:\n");
+    report2(first_found, second_found);
   }
 }
 

@@ -13,8 +13,8 @@ coord next_coord(latin_grid square, coord position) {
   result->row = position->row + 1;
   result->col = position->col;
   if (result->row >= square->size) {
-	result->row = 1;
-	result->col = position->col + 1;
+    result->row = 1;
+    result->col = position->col + 1;
   }
   return result;
 }
@@ -30,7 +30,7 @@ void grid_write(latin_grid square, coord position, int symbol) {
 void print_success(latin_grid square) {
   printf("row-completeness-repeats: %d\n", row_completeness_repeats(square));
   if (verbose) {
-	print_latin_grid(square);
+    print_latin_grid(square);
   }
 }
 
@@ -42,10 +42,10 @@ void init() {
 }
 
 void loop(size) {
-	square = new_latin_grid(size);
-	normalize_grid(square);
-	position->row = position->col = 1;
-	backtrack(square, position);
+    square = new_latin_grid(size);
+    normalize_grid(square);
+    position->row = position->col = 1;
+    backtrack(square, position);
 }
 
 void finish() {}

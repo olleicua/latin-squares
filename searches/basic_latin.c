@@ -19,8 +19,8 @@ coord next_coord(latin_grid square, coord position) {
   result->row = position->row + 1;
   result->col = position->col;
   if (result->row >= square->size) {
-	result->row = 1;
-	result->col = position->col + 1;
+    result->row = 1;
+    result->col = position->col + 1;
   }
   return result;
 }
@@ -28,16 +28,16 @@ coord next_coord(latin_grid square, coord position) {
 bool is_allowed(latin_grid square, coord position, int symbol) {
   int mask = 1 << symbol;
   return ! ((row_used[position->row] & mask) ||
-			(col_used[position->col] & mask));
+            (col_used[position->col] & mask));
 }
 
 void set_used(int* array, int a_index, int b_index, bool val) {
   if (val) {
-	int mask = 1 << b_index;
-	array[a_index] |= mask; // set the value to true
+    int mask = 1 << b_index;
+    array[a_index] |= mask; // set the value to true
   } else {
-	int mask = ~(1 << b_index);
-	array[a_index] &= mask; // set the value to false
+    int mask = ~(1 << b_index);
+    array[a_index] &= mask; // set the value to false
   }
 }
 
@@ -55,11 +55,11 @@ void grid_write(latin_grid square, coord position, int symbol) {
 void print_success(latin_grid square) {
   int repeats = row_completeness_repeats(square);
   if (verbose) {
-	printf("row-completeness-repeats: %d\n", repeats);
-	print_latin_grid(square);
+    printf("row-completeness-repeats: %d\n", repeats);
+    print_latin_grid(square);
   }
   if (repeats < min_row_completeness) {
-	min_row_completeness = repeats;
+    min_row_completeness = repeats;
   }
 }
 
@@ -80,7 +80,7 @@ void loop(size) {
   position->row = position->col = 1;
   backtrack(square, position);
   printf(" min row completeness repeats %d at size %d\n",
-		 min_row_completeness, size);
+         min_row_completeness, size);
 }
 
 void finish() {}

@@ -22,15 +22,15 @@ square_list file2squares(char* filename) {
   
   int i, j, k;
   for (i = 0; i < squares; i++) {
-	this_square = new_latin_grid(size);
-	for (j = 0; j < size; j++) {
-	  fgets(line, 20, f);
-	  for (k = 0; k < size; k++) {
-		CELL(this_square, j, k) = line[k] - 'a';
-	  }
-	}
-	fgets(line, 20, f);
-	result = square_list_push(result, this_square);
+    this_square = new_latin_grid(size);
+    for (j = 0; j < size; j++) {
+      fgets(line, 20, f);
+      for (k = 0; k < size; k++) {
+        CELL(this_square, j, k) = line[k] - 'a';
+      }
+    }
+    fgets(line, 20, f);
+    result = square_list_push(result, this_square);
   }
 
   fclose(f);

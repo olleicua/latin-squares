@@ -11,10 +11,10 @@ int cyclic_multiply(int a, int b, int size) {
 // calculate the greatest common divisor.  b is assumed to be smaller than a.
 int gcd(int a, int b) {
   if (b == 0) {
-	return 0;
+    return 0;
   }
   if (a % b == 0) {
-	return b;
+    return b;
   }
   return gcd(b, a % b);
 }

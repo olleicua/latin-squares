@@ -39,11 +39,11 @@ bool is_terminal(latin_grid square, coord position) {
   
   int pair_possibilities = 0;
   if (square == square_B) {
-	pair_possibilities = mask &
-	  pair_used[CELL(square_A, position->row, position->col)];
+    pair_possibilities = mask &
+      pair_used[CELL(square_A, position->row, position->col)];
   }
   int used_union = (mask & row_used[position->row]) |
-	(mask & col_used[position->col]) | pair_possibilities;
+    (mask & col_used[position->col]) | pair_possibilities;
   return used_union == mask;
 }
 
@@ -52,8 +52,8 @@ coord next_coord(latin_grid square, coord position) {
   result->row = position->row + 1;
   result->col = position->col;
   if (result->row >= square->size) {
-	result->row = (square == square_B) ? 0 : 1;
-	result->col = position->col + 1;
+    result->row = (square == square_B) ? 0 : 1;
+    result->col = position->col + 1;
   }
   return result;
 }
@@ -65,22 +65,22 @@ bool is_allowed(latin_grid square, coord position, int symbol) {
 
   int pair_possibilities = 0;
   if (square == square_B) {
-	pair_possibilities = mask &
-	  pair_used[CELL(square_A, position->row, position->col)];
+    pair_possibilities = mask &
+      pair_used[CELL(square_A, position->row, position->col)];
   }
     
   return ! ((row_used[position->row] & mask) ||
-			(col_used[position->col] & mask) ||
-			pair_possibilities);
+            (col_used[position->col] & mask) ||
+            pair_possibilities);
 }
 
 void set_used(int* array, int a_index, int b_index, bool val) {
   if (val) {
-	int mask = 1 << b_index;
-	array[a_index] |= mask; // set the value to true
+    int mask = 1 << b_index;
+    array[a_index] |= mask; // set the value to true
   } else {
-	int mask = ~(1 << b_index);
-	array[a_index] &= mask; // set the value to false
+    int mask = ~(1 << b_index);
+    array[a_index] &= mask; // set the value to false
   }
 }
 
@@ -98,49 +98,49 @@ void grid_write(latin_grid square, coord position, int symbol) {
   set_used(col_used, position->col, symbol, true);
   // adjacent pairs
   if (square == square_B) {
-	set_used(pair_used, CELL(square_A, position->row, position->col),
-			 old_symbol, false);
-	set_used(pair_used, CELL(square_A, position->row, position->col),
-			 symbol, true);
+    set_used(pair_used, CELL(square_A, position->row, position->col),
+             old_symbol, false);
+    set_used(pair_used, CELL(square_A, position->row, position->col),
+             symbol, true);
   }
   CELL(square, position->row, position->col) = symbol;
 }
 
 void print_success(latin_grid square) {
   if (square == square_B) {
-	int repeats_A = row_completeness_repeats(square_A);
-	int repeats_B = row_completeness_repeats(square_B);
-	int repeats_total = repeats_A + repeats_B;
-	int repeats_d_AB = diagonal_repeats(square_A, square_B);
-	int repeats_d_BA = diagonal_repeats(square_B, square_A);
-	int repeats_d_total = repeats_d_AB + repeats_d_BA;
-	if (verbose) {
-	  report2(square_A, square_B);
-	}
-	printf(" *\n\n");
-	if (repeats_A < min_row_completeness_A) {
-	  min_row_completeness_A = repeats_A;
-	}
-	if (repeats_B < min_row_completeness_B) {
-	  min_row_completeness_B = repeats_B;
-	}
-	if (repeats_total < min_row_completeness_total) {
-	  min_row_completeness_total = repeats_total;
-	}
+    int repeats_A = row_completeness_repeats(square_A);
+    int repeats_B = row_completeness_repeats(square_B);
+    int repeats_total = repeats_A + repeats_B;
+    int repeats_d_AB = diagonal_repeats(square_A, square_B);
+    int repeats_d_BA = diagonal_repeats(square_B, square_A);
+    int repeats_d_total = repeats_d_AB + repeats_d_BA;
+    if (verbose) {
+      report2(square_A, square_B);
+    }
+    printf(" *\n\n");
+    if (repeats_A < min_row_completeness_A) {
+      min_row_completeness_A = repeats_A;
+    }
+    if (repeats_B < min_row_completeness_B) {
+      min_row_completeness_B = repeats_B;
+    }
+    if (repeats_total < min_row_completeness_total) {
+      min_row_completeness_total = repeats_total;
+    }
 
-	if (repeats_d_AB < min_diagonal_completeness_AB) {
-	  min_diagonal_completeness_AB = repeats_d_AB;
-	}
-	if (repeats_d_BA < min_diagonal_completeness_BA) {
-	  min_diagonal_completeness_BA = repeats_d_BA;
-	}
-	if (repeats_d_total < min_diagonal_completeness_total) {
-	  min_diagonal_completeness_total = repeats_d_total;
-	}
+    if (repeats_d_AB < min_diagonal_completeness_AB) {
+      min_diagonal_completeness_AB = repeats_d_AB;
+    }
+    if (repeats_d_BA < min_diagonal_completeness_BA) {
+      min_diagonal_completeness_BA = repeats_d_BA;
+    }
+    if (repeats_d_total < min_diagonal_completeness_total) {
+      min_diagonal_completeness_total = repeats_d_total;
+    }
   } else {
-	coord position = new_coord();
-	position->row = position->col = 0;
-	backtrack(square_B, position);
+    coord position = new_coord();
+    position->row = position->col = 0;
+    backtrack(square_B, position);
   }
 }
 
@@ -171,17 +171,17 @@ void loop(size) {
   position->row = position->col = 1;
   backtrack(square_A, position);
   printf(" min row completeness repeats A %d at size %d\n",
-		 min_row_completeness_A, size);
+         min_row_completeness_A, size);
   printf(" min row completeness repeats B %d at size %d\n",
-		 min_row_completeness_B, size);
+         min_row_completeness_B, size);
   printf(" min row completeness repeats total %d at size %d\n\n",
-		 min_row_completeness_total, size);
+         min_row_completeness_total, size);
   printf(" min diagonal completeness repeats AB %d at size %d\n",
-		 min_diagonal_completeness_AB, size);
+         min_diagonal_completeness_AB, size);
   printf(" min diagonal completeness repeats BA %d at size %d\n",
-		 min_diagonal_completeness_BA, size);
+         min_diagonal_completeness_BA, size);
   printf(" min diagonal completeness repeats total %d at size %d\n\n",
-		 min_diagonal_completeness_total, size);
+         min_diagonal_completeness_total, size);
 
 }
 
