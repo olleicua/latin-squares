@@ -128,7 +128,7 @@ int main(int argc, char *argv[]) {
   int size = squares->square->size;
   
   // initialize best metrics
-  best_orthogonal = size * size;
+  best_orthogonal = 2 * size;
   best_diagonal = size * size;
   best_2AD = 3 * size * size;
   best_2ADE = 4 * size * size;
