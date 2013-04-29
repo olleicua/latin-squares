@@ -1,12 +1,12 @@
 #include "../lib/backtrack.c"
 
-bool is_finished(latin_grid square, coord position) { }
+bool is_finished(latin_grid square, coord position) { return false; }
 
-bool is_terminal(latin_grid square, coord position) { }
+bool is_terminal(latin_grid square, coord position) { return false; }
 
-coord next_coord(latin_grid square, coord position) { }
+coord next_coord(latin_grid square, coord position) { return new_coord(); }
 
-bool is_allowed(latin_grid square, coord position, int symbol) { }
+bool is_allowed(latin_grid square, coord position, int symbol) { return false; }
 
 void set_used(int* array, int a_index, int b_index, bool val) { }
 
