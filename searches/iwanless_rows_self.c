@@ -128,11 +128,11 @@ int main(int argc, char *argv[]) {
   int size = squares->square->size;
   
   // initialize best metrics
-  best_orthogonal = size;
-  best_diagonal = size;
-  best_2AD = 3 * size;
-  best_2ADE = 4 * size;
-  best_DE_for_A = size * size * 2;
+  best_orthogonal = size * size;
+  best_diagonal = size * size;
+  best_2AD = 3 * size * size;
+  best_2ADE = 4 * size * size;
+  best_DE_for_A = size * size * size * 2;
   
   // look at all permuted combinations
   verbose = true;
