@@ -8,7 +8,7 @@ void fill_in_square(int* first_row, latin_grid square) {
   int row, col;
 
   for (col = 0; col < square->size; col++) {
-	CELL(square, 0, col) = first_row[col];
+    CELL(square, 0, col) = first_row[col];
   }
   
   for (row = 1; row < square->size; row++) {
