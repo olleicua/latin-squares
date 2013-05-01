@@ -1,23 +1,40 @@
+* directory structure
+
 - The lib directory contains modular code that can be used by
   various programs
 
-	- squares.c and squares.h define an interface to a latin_grid
+    - squares.c and squares.h define an interface to a latin_grid
       struct that represents a latin square of some order.  There are
       functions to measure the various metrics and print out reports
       on a pair of squares.
 
-	- backtrack.c defines a shell of a backtracking search program.
+    - backtrack.c defines a shell of a backtracking search program.
       all of the details that might be specific to a given search
       method are left in undefined function stubs.
-	
-	- cyclic.c, dihedral.c, and generating_arrays.c all contain code
+    
+    - cyclic.c, dihedral.c, and generating_arrays.c all contain code
       specific to manipulating directed terraces and generating
       arrays.
-	  
-	- read_row_complete.c builds an API for reading squares from files
-	  
+      
+    - read_row_complete.c builds an API for reading squares from files
+      
 - the row_complete_squares directory contains row complete squares
   that can be searched using the row permutations method
   
 - searches contains code for the individual methods
 
+- logs contains results from running the methods at various orders
+
+* usage
+
+The various methods can be run using the build script.  For example:
+
+ $ ./build searches/cyclic_even 10
+
+Will run that cyclic method at all even orders up to 10.
+
+The row permutations method is unique in that instead of being passed
+an order up to which should search it is passed a file containing row
+complete squares to search for example:
+
+ $ ./build searches/row_permutations row_complete_squares/row_complete_6
