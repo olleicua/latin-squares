@@ -1,3 +1,7 @@
+// This file defines the shell of a backtracking search.
+// It should be included in another file inwhich the function stubs below are
+// implemented.
+
 #include "squares.c"
 
 bool is_finished(latin_grid square, coord position);

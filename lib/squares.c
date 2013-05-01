@@ -1,3 +1,5 @@
+// Defines an API for interacting with latin squares
+
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>

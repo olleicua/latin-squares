@@ -1,5 +1,5 @@
 #include "../lib/squares.c"
-#include "../lib/read_iwanless.c"
+#include "../lib/read_row_complete.c"
 
 void grid_write(latin_grid square, coord position, int symbol) {}
 

@@ -1,7 +1,10 @@
 #!/usr/bin/ruby
 
+# A simple ruby script that compiles and runs C programs
+# and forwards CLI arguments
+
 if ARGV[0]
   exec "gcc -Wall #{ARGV[0]}.c -o #{ARGV[0]} && ./#{ARGV[0]} #{ARGV[1..-1].join " "}"
 else
-    puts "Usage: build FILENAME"
+    puts "Usage: build EXECUTABLE"
 end

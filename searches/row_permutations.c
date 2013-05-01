@@ -1,5 +1,5 @@
 #include "../lib/squares.c"
-#include "../lib/read_iwanless.c"
+#include "../lib/read_row_complete.c"
 #define MIN(X,Y) ((X) < (Y) ? (X) : (Y))
 
 void grid_write(latin_grid square, coord position, int symbol) {}
